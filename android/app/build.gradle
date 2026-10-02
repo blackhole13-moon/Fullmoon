@@ -7,8 +7,8 @@ android {
         applicationId "com.projectbytira.bernadya"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 57103
-        versionName "57.1.3"
+        versionCode 57101
+        versionName "57.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

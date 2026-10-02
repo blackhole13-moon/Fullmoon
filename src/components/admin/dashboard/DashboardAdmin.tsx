@@ -96,6 +96,13 @@ interface Absensi {
   keterangan?: string | null;
 }
 
+type SidebarRoot = {
+  key: MenuKey;
+  label: string;
+  icon: string;
+  children?: Array<[MenuKey, string, string]>;
+};
+
 type MenuKey =
   | 'overview' | 'employees' | 'employee-new' | 'employee-inactive' | 'employee-360' | 'employee-add' | 'id-card' | 'organization' | 'hr-operations'
   | 'attendance' | 'attendance-today' | 'late' | 'leave' | 'overtime' | 'selfie' | 'gps'
@@ -522,6 +529,7 @@ function watchSupabaseAuth(load: () => void | Promise<void>) {
 
 export default function DashboardAdmin() {
   const { t, lang, setLang } = useTranslation();
+  const isWebReferenceSidebar = typeof document !== 'undefined' && document.documentElement.dataset.platform === 'web';
 
   // 1. Deklarasi State diletakkan paling atas di dalam komponen
   const [logged, setLogged] = useState(false);
@@ -709,7 +717,13 @@ export default function DashboardAdmin() {
   }, []);
 
   const [roleOpen, setRoleOpen] = useState(false);
-  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({
+    employees: true,
+    'employee-new': true,
+    approvals: true,
+    reports: true,
+    settings: true,
+  });
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [, setAnnouncementsLoading] = useState(false);
 
@@ -754,7 +768,8 @@ export default function DashboardAdmin() {
     void loadAnnouncements();
   }, []);
 
-  // 2. Deklarasi menuGroups
+  // Legacy navigation tree is retained for Android so the Android UI and
+  // interaction model remain unchanged. The new eight-item navigation is web-only.
   const menuGroups = useMemo(() => [
     {
       title: t('main'),
@@ -811,7 +826,7 @@ export default function DashboardAdmin() {
         ['audit', t('audit_log'), 'request'] as [MenuKey, string, string],
       ],
     },
-  ], [t]);
+  ], [t, pendingEmployees.length, inactiveEmployees.length]);
 
   const visibleMenuGroups = useMemo(() =>
     menuGroups
@@ -823,6 +838,109 @@ export default function DashboardAdmin() {
       }))
       .filter((group) => group.items.length > 0),
     [menuGroups, userRole, dbPerms]
+  );
+
+  // Web sidebar follows the supplied Project by Tirta reference:
+  // eight simple primary items, with the complete module tree kept
+  // available through contextual submenus so no existing HR function is lost.
+  const sidebarRoots = useMemo<SidebarRoot[]>(() => [
+    { key: 'overview', label: 'Dashboard', icon: 'home' },
+    {
+      key: 'employees',
+      label: 'Karyawan',
+      icon: 'users',
+      children: [
+        ['employees', 'Semua Karyawan', 'users'],
+        ['employee-new', `Registrasi Menunggu${pendingEmployees.length ? ` (${pendingEmployees.length})` : ''}`, 'users'],
+        ['employee-inactive', `Karyawan Tidak Aktif${inactiveEmployees.length ? ` (${inactiveEmployees.length})` : ''}`, 'users'],
+        ['id-card', 'ID Card', 'card'],
+        ['employee-360', 'Employee 360', 'users'],
+        ['organization', 'Organisasi', 'org'],
+        ['hr-operations', 'HR Operations', 'settings'],
+      ],
+    },
+    {
+      key: 'employee-new',
+      label: 'Registrasi',
+      icon: 'users',
+      children: [
+        ['employee-add', 'Registrasi Karyawan', 'plus'],
+        ['employee-new', 'Menunggu Approval', 'users'],
+      ],
+    },
+    {
+      key: 'approvals',
+      label: 'Approval',
+      icon: 'check',
+      children: [
+        ['approvals', 'Approval Center', 'check'],
+        ['leave-request', 'Permintaan Cuti / Izin', 'leave'],
+        ['leave-balance', 'Saldo Cuti', 'balance'],
+      ],
+    },
+    {
+      key: 'announcements',
+      label: 'Pengumuman',
+      icon: 'bell',
+    },
+    {
+      key: 'feedback',
+      label: 'Feedback',
+      icon: 'request',
+    },
+    {
+      key: 'reports',
+      label: 'Laporan',
+      icon: 'report',
+      children: [
+        ['reports', 'Dashboard Laporan', 'report'],
+        ['attendance', 'Absensi & Kehadiran', 'clock'],
+        ['schedule', 'Jadwal Kerja', 'calendar'],
+        ['shift', 'Shift', 'shift'],
+        ['holiday', 'Hari Libur', 'holiday'],
+        ['payroll', 'Payroll Bulanan', 'payroll'],
+        ['payroll-components', 'Komponen Gaji', 'components'],
+        ['payroll-overtime', 'Payroll Lembur', 'arrow'],
+        ['payslip', 'Slip Gaji', 'calendar'],
+        ['performance', 'Performance', 'arrow'],
+        ['kpi', 'KPI Target', 'kpi'],
+        ['recruitment-v25', 'Recruitment ATS', 'recruitment'],
+        ['recruitment', 'Recruitment', 'recruitment'],
+        ['candidates', 'Kandidat', 'users'],
+      ],
+    },
+    {
+      key: 'settings',
+      label: 'Pengaturan',
+      icon: 'settings',
+      children: [
+        ['settings', 'Pengaturan Umum', 'settings'],
+        ['roles', 'Roles & Permissions', 'users'],
+        ['notifications', 'Notifikasi', 'bell'],
+        ['system-health', 'System Health', 'health'],
+        ['audit', 'Audit Log', 'request'],
+        ['ai-center', 'AI HR Center', 'kpi'],
+        ['professional-suite', 'Professional Operations', 'kpi'],
+        ['production-hr', 'HR Transaction Center', 'settings'],
+        ['payroll-engine', 'Payroll Engine', 'payroll'],
+        ['payroll-production-v22', 'Payroll Control', 'payroll'],
+        ['payroll-indonesia-v23', 'Payroll Indonesia', 'payroll'],
+        ['security-v21', 'Security Center', 'health'],
+        ['enterprise-v20', 'Enterprise V20', 'settings'],
+        ...Array.from({ length: 10 }, (_, i) => {
+          const version = 26 + i as 26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35;
+          return [`enterprise-v${version}`, `Enterprise V${version}`, 'settings'] as [MenuKey, string, string];
+        }),
+      ],
+    },
+  ], [t, pendingEmployees.length, inactiveEmployees.length]);
+
+  const canSeeSidebarItem = (item: [MenuKey, string, string]) =>
+    menuPermissionForRole(item[0], userRole, dbPerms);
+
+  const flatSidebarKeys = useMemo(() =>
+    sidebarRoots.flatMap((root) => [root.key, ...(root.children || []).map((child) => child[0])]),
+    [sidebarRoots]
   );
 
   useEffect(() => {
@@ -879,9 +997,13 @@ export default function DashboardAdmin() {
 
       setEmployee360Id(employeeId);
 
+      const validKeys = isWebReferenceSidebar
+        ? flatSidebarKeys
+        : menuGroups.flatMap((group) => group.items.map((item) => item[0]));
+
       if (
         candidate &&
-        menuGroups.flatMap(g => g.items).some(x => x[0] === candidate) &&
+        validKeys.includes(candidate) &&
         menuPermissionForRole(candidate, userRole, dbPerms)
       ) {
         setMenu(candidate);
@@ -892,7 +1014,7 @@ export default function DashboardAdmin() {
     window.addEventListener('hashchange', read);
 
     return () => window.removeEventListener('hashchange', read);
-  }, [userRole, dbPerms, menuGroups]);
+  }, [userRole, dbPerms, flatSidebarKeys, menuGroups, isWebReferenceSidebar]);
   
   const navigate = (next: MenuKey) => { setMenu(next); location.hash = `/${next}`; if (window.innerWidth < 900) setSidebar(false) };
 
@@ -934,7 +1056,7 @@ export default function DashboardAdmin() {
     const uid = userData.user?.id;
     if (!uid) { setError("Sesi login tidak ditemukan."); return; }
     if (!file.type.startsWith("image/")) { setError("File harus berupa gambar."); return; }
-    if (file.size > 5 * 1024 * 1024) { setError("Ukuran foto maksimal 5 MB."); return; }
+    if (file.size > 2 * 1024 * 1024) { setError("Ukuran foto maksimal 2 MB."); return; }
     const path = `${uid}/avatar.jpg`;
     const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true, contentType: file.type });
     if (uploadError) { setError("Gagal mengunggah foto: " + uploadError.message); return; }
@@ -1083,7 +1205,11 @@ export default function DashboardAdmin() {
   }
 
   const payroll = employees.reduce((s, k) => s + Number(k.gaji_pokok || 0), 0);
-  const activeLabel = menuGroups.flatMap(g => g.items).find((x) => x[0] === menu)?.[1] || 'Overview';
+  const activeLabel = isWebReferenceSidebar
+    ? sidebarRoots
+      .flatMap((root) => [[root.key, root.label] as [MenuKey, string], ...(root.children || []).map(([key, label]) => [key, label] as [MenuKey, string])])
+      .find(([key]) => key === menu)?.[1] || 'Dashboard'
+    : menuGroups.flatMap((group) => group.items).find((item) => item[0] === menu)?.[1] || 'Overview';
   
   const exportCsv = (rows: Record<string, unknown>[], filename: string, columns?: string[]) => {
     if (!rows.length) { setToast(t("no_data_export")); return; }
@@ -1124,57 +1250,103 @@ export default function DashboardAdmin() {
         </div>
       </div>
 
-      <nav className="sidebar-nav" aria-label="Menu utama">
-  {visibleMenuGroups.map((group) => {
-    const visibleItems = group.items.filter((item) =>
-      menuPermissionForRole(item[0], userRole, dbPerms)
-    );
+      {isWebReferenceSidebar ? (
+        <nav className="sidebar-nav sidebar-nav-reference" aria-label="Menu utama">
+          {sidebarRoots.map((root) => {
+            const children = (root.children || []).filter(canSeeSidebarItem);
+            const rootVisible = menuPermissionForRole(root.key, userRole, dbPerms) || children.length > 0;
+            if (!rootVisible) return null;
 
-    if (!visibleItems.length) return null;
-return (
-            <div className="nav-group" key={group.title}>
-              {sidebar && (
+            const rootActive = menu === root.key || children.some(([key]) => menu === key);
+            const isOpen = !collapsedGroups[root.key];
+
+            return (
+              <div className={`sidebar-nav-root ${rootActive ? 'has-active-child' : ''}`} key={root.key}>
                 <button
                   type="button"
-                  className="nav-title"
-                  onClick={() =>
-                    setCollapsedGroups((prev) => ({
-                      ...prev,
-                      [group.title]: !prev[group.title],
-                    }))
-                  }
-                  aria-expanded={!collapsedGroups[group.title]}
+                  className={`nav-item nav-root-item ${rootActive && !children.length ? 'active' : ''}`}
+                  onClick={() => {
+                    navigate(root.key);
+                    if (children.length) {
+                      setCollapsedGroups((prev) => ({ ...prev, [root.key]: !prev[root.key] }));
+                    }
+                  }}
+                  title={!sidebar ? root.label : undefined}
                 >
-                  <span>{group.title}</span>
-                  <Icon
-                    name={collapsedGroups[group.title] ? 'chevronRight' : 'chevronDown'}
-                  />
+                  <Icon name={root.icon} />
+                  {sidebar && <span>{root.label}</span>}
+                  {sidebar && children.length > 0 && (
+                    <span className="nav-root-chevron">
+                      <Icon name={isOpen ? 'chevronDown' : 'chevronRight'} />
+                    </span>
+                  )}
                 </button>
-              )}
 
-              {!collapsedGroups[group.title] && (
-                <div className="nav-group-items">
-                  {visibleItems.map(([key, label, icon]) => (
-                    <button
-                      key={key}
-                      className={`nav-item ${menu === key ? 'active' : ''}`}
-                      onClick={() => navigate(key)}
-                      title={!sidebar ? label : undefined}
-                      type="button"
-                    >
-                      <Icon name={icon} />
-                      {sidebar && <span>{label}</span>}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </nav>
+                {sidebar && isOpen && children.length > 0 && (
+                  <div className="nav-submenu">
+                    {children.map(([key, label, icon]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        className={`nav-item nav-sub-item ${menu === key ? 'active' : ''}`}
+                        onClick={() => navigate(key)}
+                      >
+                        <span className="nav-sub-dot" aria-hidden="true" />
+                        <Icon name={icon} />
+                        <span>{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+      ) : (
+        <nav className="sidebar-nav" aria-label="Menu utama">
+          {visibleMenuGroups.map((group) => {
+            const visibleItems = group.items;
+            if (!visibleItems.length) return null;
+            return (
+              <div className="nav-group" key={group.title}>
+                {sidebar && (
+                  <button
+                    type="button"
+                    className="nav-title"
+                    onClick={() =>
+                      setCollapsedGroups((prev) => ({
+                        ...prev,
+                        [group.title]: !prev[group.title],
+                      }))
+                    }
+                    aria-expanded={!collapsedGroups[group.title]}
+                  >
+                    <span>{group.title}</span>
+                    <Icon name={collapsedGroups[group.title] ? 'chevronRight' : 'chevronDown'} />
+                  </button>
+                )}
 
-
-
+                {!collapsedGroups[group.title] && (
+                  <div className="nav-group-items">
+                    {visibleItems.map(([key, label, icon]) => (
+                      <button
+                        key={key}
+                        className={`nav-item ${menu === key ? 'active' : ''}`}
+                        onClick={() => navigate(key)}
+                        title={!sidebar ? label : undefined}
+                        type="button"
+                      >
+                        <Icon name={icon} />
+                        {sidebar && <span>{label}</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+      )}
       {/* ===== BAGIAN BAWAH SIDEBAR ===== */}
       <div className="sidebar-bottom">
         <button className="logout" onClick={async () => {
@@ -1800,17 +1972,20 @@ function NewEmployees({data,onRefresh}:{data:Karyawan[];onRefresh:()=>void}) {
 
   useEffect(()=>{
     let active=true;
-    const load=()=>{
+    const load=async()=>{
       setPhotoUrl('');
       const path=selected?.foto_url;
       if(!path) return;
 
-      const { data } = supabase.storage
-        .from('profile-photos')
-        .getPublicUrl(path);
-
-      if(active && data?.publicUrl) {
-        setPhotoUrl(data.publicUrl);
+      try {
+        const { data, error } = await supabase.storage
+          .from('profile-photos')
+          .createSignedUrl(path, 900);
+        if(active && !error && data?.signedUrl) {
+          setPhotoUrl(data.signedUrl);
+        }
+      } catch {
+        if (active) setPhotoUrl('');
       }
     };
 

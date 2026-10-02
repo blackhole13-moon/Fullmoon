@@ -75,12 +75,6 @@ const CSS = `
     background-image: url("/cosmic-desktop-wide/cosmic-nebula.webp") !important;
   }
 
-  html.pt-web-desktop[data-cosmic-theme="aurora"] .talenta-shell,
-  html.pt-web-desktop[data-cosmic-theme="aurora"] .talenta-main,
-  html.pt-web-desktop[data-cosmic-theme="aurora"] .admin-page-frame {
-    background-image: url("/aurora-background.svg") !important;
-  }
-
   /* -----------------------------------------------------
      MATIKAN LAYER ATMOSFERA YANG MEMBUAT KABUR
      Background utama tetap gambar asli.
@@ -310,11 +304,6 @@ const CSS = `
   html.pt-web-desktop[data-cosmic-theme="nebula"] .unified-login-page {
     background-image:
       url("/cosmic-desktop-wide/cosmic-nebula.webp") !important;
-  }
-
-  html.pt-web-desktop[data-cosmic-theme="aurora"] .unified-login-page {
-    background-image:
-      url("/aurora-background.svg") !important;
   }
 
   /* Hilangkan overlay blur login */

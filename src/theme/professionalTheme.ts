@@ -4083,6 +4083,9 @@ function readPersistedCosmicTheme(): CosmicThemeId {
 
 export function installProjectByTirtaTheme(): void {
   if (typeof document === 'undefined') return;
+  // The rebuilt web UI owns all browser styling. Keep this legacy runtime
+  // stylesheet isolated to Android so the Android experience remains intact.
+  if (document.documentElement.dataset.platform === 'web') return;
   const styleId = 'project-by-tirta-runtime-theme';
   if (document.getElementById(styleId)) return;
   const style = document.createElement('style');

@@ -7,10 +7,11 @@ import { registerPwa } from './pwa';
 import { initializeCosmicTheme, installProjectByTirtaTheme } from './theme/professionalTheme';
 import { installLoadingStyles } from './loading-real-final-v57.15';
 import { installProjectTirtaAndroidPolish } from './theme/projectTirtaAndroidPolish';
-import { installProjectTirtaDashboardVisual } from './theme/projectTirtaDashboardVisual';
 
+import './styles/project-tirta-web-v1.css';
 import './styles/android-cosmic-background.css';
 registerPwa();
+document.documentElement.dataset.platform = Capacitor.getPlatform();
 
 //
 // Web/PWA juga wajib memasang runtime stylesheet utama.
@@ -18,9 +19,6 @@ registerPwa();
 //
 
 installProjectByTirtaTheme();
-if (Capacitor.getPlatform() !== 'android') {
-  installProjectTirtaDashboardVisual();
-}
 if (Capacitor.getPlatform() === 'android') {
   initializeCosmicTheme();
   installProjectTirtaAndroidPolish();

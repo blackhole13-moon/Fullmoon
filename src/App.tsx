@@ -1,4 +1,3 @@
-import './styles/startup-branding.css';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { isSupabaseConfigured, supabase } from './lib/supabase/client';

@@ -55,14 +55,6 @@ html[data-cosmic-theme="nebula"] .unified-login-page {
   background-image: url("/cosmic-desktop/cosmic-nebula.webp") !important;
 }
 
-html[data-cosmic-theme="aurora"] .talenta-shell,
-html[data-cosmic-theme="aurora"] .talenta-main,
-html[data-cosmic-theme="aurora"] .admin-page-frame,
-html[data-cosmic-theme="aurora"] .public-home,
-html[data-cosmic-theme="aurora"] .unified-login-page {
-  background-image: url("/aurora-background.svg") !important;
-}
-
 html[data-cosmic-theme] .talenta-shell,
 html[data-cosmic-theme] .talenta-main,
 html[data-cosmic-theme] .admin-page-frame,
@@ -100,7 +92,6 @@ html[data-cosmic-theme] .employee-portal-cosmic::after {
   html[data-cosmic-theme="galaxy"] :where(.talenta-shell, .talenta-main, .admin-page-frame, .public-home, .unified-login-page) { background-image: url("/cosmic-desktop-wide/cosmic-galaxy.webp") !important; }
   html[data-cosmic-theme="blackhole"] :where(.talenta-shell, .talenta-main, .admin-page-frame, .public-home, .unified-login-page) { background-image: url("/cosmic-desktop-wide/cosmic-blackhole.webp") !important; }
   html[data-cosmic-theme="nebula"] :where(.talenta-shell, .talenta-main, .admin-page-frame, .public-home, .unified-login-page) { background-image: url("/cosmic-desktop-wide/cosmic-nebula.webp") !important; }
-  html[data-cosmic-theme="aurora"] :where(.talenta-shell, .talenta-main, .admin-page-frame, .public-home, .unified-login-page) { background-image: url("/aurora-background.svg") !important; }
 }
 
 /* =====================================================
