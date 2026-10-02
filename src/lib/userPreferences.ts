@@ -10,6 +10,11 @@ const isTheme = (value: unknown): value is CosmicThemeId =>
   typeof value === 'string' &&
   ['sun', 'moon', 'galaxy', 'blackhole', 'nebula', 'aurora'].includes(value);
 
+export type PublicAppTheme = CosmicThemeId | 'professional';
+
+const isPublicTheme = (value: unknown): value is PublicAppTheme =>
+  value === 'professional' || isTheme(value);
+
 
 function safeGet(key: string): string | null {
   try { return localStorage.getItem(key); } catch { return null; }
@@ -67,12 +72,12 @@ const EMPLOYEE_PORTAL_THEME_CACHE_KEY = 'project-tirta-employee-portal-theme';
 
 const PUBLIC_THEME_CACHE_KEY = 'project-tirta-public-theme';
 
-export async function getPublicAppTheme(): Promise<CosmicThemeId> {
+export async function getPublicAppTheme(): Promise<PublicAppTheme> {
   const cached = safeGet(PUBLIC_THEME_CACHE_KEY);
-  const fallback: CosmicThemeId = isTheme(cached) ? cached : 'sun';
+  const fallback: PublicAppTheme = isPublicTheme(cached) ? cached : 'professional';
   try {
     const { data, error } = await supabase.rpc('hris_get_public_app_theme');
-    if (!error && isTheme(data)) {
+    if (!error && isPublicTheme(data)) {
       safeSet(PUBLIC_THEME_CACHE_KEY, data);
       return data;
     }
@@ -80,6 +85,34 @@ export async function getPublicAppTheme(): Promise<CosmicThemeId> {
     console.warn('Unable to load public app theme:', error);
   }
   return fallback;
+}
+
+export async function setPublicAppTheme(theme: PublicAppTheme): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('hris_set_public_app_theme', {
+      p_theme: theme,
+    });
+
+    if (error) {
+      console.warn('Unable to set public app theme:', error);
+      return false;
+    }
+
+    safeSet(PUBLIC_THEME_CACHE_KEY, theme);
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('project-tirta-public-theme-change', {
+          detail: theme,
+        })
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.warn('Unable to set public app theme:', error);
+    return false;
+  }
 }
 
 export async function getEmployeePortalTheme(): Promise<CosmicThemeId> {
@@ -108,10 +141,25 @@ export async function getEmployeePortalTheme(): Promise<CosmicThemeId> {
 export async function setEmployeePortalTheme(theme: CosmicThemeId): Promise<boolean> {
   try {
     const { error } = await supabase.rpc('hris_set_employee_portal_theme', { p_theme: theme });
+
     if (error) {
       console.warn('Unable to set employee portal theme:', error);
       return false;
     }
+
+    // Cache hanya setelah server berhasil menerima perubahan.
+    safeSet(EMPLOYEE_PORTAL_THEME_CACHE_KEY, theme);
+
+    // Membantu tab/window lain pada device yang sama
+    // menerapkan tema tanpa menunggu polling berikutnya.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('project-tirta-employee-theme-change', {
+          detail: theme,
+        }),
+      );
+    }
+
     return true;
   } catch (error) {
     console.warn('Unable to set employee portal theme:', error);

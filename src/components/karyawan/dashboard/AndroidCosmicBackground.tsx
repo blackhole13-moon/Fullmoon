@@ -141,14 +141,17 @@ export default function AndroidCosmicBackground() {
   return createPortal(
     <div style={root} aria-hidden="true">
       <div ref={art} style={{
-        position:'absolute',inset:'-7%',
+        position:'absolute',
+        inset:0,
+        width:'100%',
+        height:'100%',
         backgroundImage:
           theme === 'aurora'
-            ? 'url("/aurora-background.svg")'
+            ? 'url("/aurora-background.webp")'
             : `url("${ART[theme]}")`,
         backgroundRepeat:'no-repeat',
-        backgroundPosition:'center',
-        backgroundSize:'cover',
+        backgroundPosition:'center center',
+        backgroundSize:'100% 100%',
         opacity:.98,
         willChange:'auto',
         transform:'none',

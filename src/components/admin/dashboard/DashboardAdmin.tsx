@@ -26,7 +26,13 @@ import AdminAnnouncementManager from '../../../features/announcements/AdminAnnou
 import type { Announcement } from '../../../features/announcements/types';
 import AttendanceUnified from './AttendanceUnified';
 import { applyCosmicTheme, getCosmicTheme, COSMIC_THEMES, type CosmicThemeId } from '../../../theme/professionalTheme';
-import { loadUserThemePreference, saveUserThemePreference, setEmployeePortalTheme, saveCustomThemeCache } from '../../../lib/userPreferences';
+import {
+  loadUserThemePreference,
+  saveUserThemePreference,
+  setEmployeePortalTheme,
+  setPublicAppTheme,
+  saveCustomThemeCache
+} from '../../../lib/userPreferences';
 
 type Karyawan = {
   id: string;
@@ -2597,7 +2603,16 @@ function ThemeControl({ userRole }: { userRole: string }) {
     if (userId) {
       await saveUserThemePreference(userId, next);
       if (userRole.trim().toLowerCase() === 'super admin') {
-        await setEmployeePortalTheme(next);
+        const employeeSync = await setEmployeePortalTheme(next);
+        const publicSync = await setPublicAppTheme(next);
+
+        if (!employeeSync || !publicSync) {
+          console.warn('ThemeControl sync incomplete:', {
+            employeeSync,
+            publicSync,
+            theme: next,
+          });
+        }
       }
     }
     setOpen(false);
@@ -2829,7 +2844,19 @@ function Settings({
       if (userId) {
         if (theme.id in COSMIC_THEMES) {
           await saveUserThemePreference(userId, theme.id as CosmicThemeId);
-          if (canManageThemes) await setEmployeePortalTheme(theme.id as CosmicThemeId);
+
+          if (canManageThemes) {
+            const employeeSync = await setEmployeePortalTheme(theme.id as CosmicThemeId);
+            const publicSync = await setPublicAppTheme(theme.id as CosmicThemeId);
+
+            if (!employeeSync || !publicSync) {
+              console.warn('Theme sync incomplete:', {
+                employeeSync,
+                publicSync,
+                theme: theme.id,
+              });
+            }
+          }
         } else {
           saveCustomThemeCache(userId, theme);
         }

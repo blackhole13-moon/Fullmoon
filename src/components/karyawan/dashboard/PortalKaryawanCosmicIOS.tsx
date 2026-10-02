@@ -2,7 +2,7 @@ import '../../../styles/android-id-card.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../../../locales/LanguageContext';
 import { supabase } from '../../../lib/supabase/client';
-import { getPublicAppTheme } from '../../../lib/userPreferences';
+import { getEmployeePortalTheme } from '../../../lib/userPreferences';
 import { applyCosmicTheme } from '../../../theme/professionalTheme';
 import { cacheAttendance, cacheEmployee, countOfflineAttendance, enqueueOfflineAttendance, getCachedAttendance, getCachedEmployee, syncOfflineAttendance } from '../../../lib/androidOfflineAttendance';
 
@@ -136,20 +136,58 @@ export default function PortalKaryawan({onLogout}:{onLogout?:()=>void}){
   // Employee language remains independently controlled by its own account.
   useEffect(() => {
     let active = true;
+    let serial = 0;
 
-    const applyEmployeeTheme = async () => {
-      const next = await getPublicAppTheme();
-      if (active) applyCosmicTheme(next, false);
+    const applyEmployeeTheme = async (forcedTheme?: string) => {
+      const requestId = ++serial;
+      const next = forcedTheme || await getEmployeePortalTheme();
+
+      if (!active || requestId !== serial) return;
+
+      const current =
+        document.documentElement.dataset.cosmicTheme || '';
+
+      if (current !== next) {
+        applyCosmicTheme(next as any, false);
+      }
+    };
+
+    const onEmployeeThemeChange = (event: Event) => {
+      const next = (event as CustomEvent<string>).detail;
+      if (typeof next === 'string') {
+        void applyEmployeeTheme(next);
+      }
+    };
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === 'project-tirta-employee-portal-theme') {
+        void applyEmployeeTheme();
+      }
     };
 
     void applyEmployeeTheme();
+
     const timer = window.setInterval(() => {
       void applyEmployeeTheme();
     }, 5000);
 
+    window.addEventListener(
+      'project-tirta-employee-theme-change',
+      onEmployeeThemeChange,
+    );
+
+    window.addEventListener('storage', onStorage);
+
     return () => {
       active = false;
       window.clearInterval(timer);
+
+      window.removeEventListener(
+        'project-tirta-employee-theme-change',
+        onEmployeeThemeChange,
+      );
+
+      window.removeEventListener('storage', onStorage);
     };
   }, []);
 

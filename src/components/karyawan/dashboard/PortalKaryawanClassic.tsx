@@ -26,20 +26,58 @@ export default function PortalKaryawan({onLogout}:{onLogout?:()=>void}){
   // Employee language remains independently controlled by its own account.
   useEffect(() => {
     let active = true;
+    let serial = 0;
 
-    const applyEmployeeTheme = async () => {
-      const next = await getEmployeePortalTheme();
-      if (active) applyCosmicTheme(next, false);
+    const applyEmployeeTheme = async (forcedTheme?: string) => {
+      const requestId = ++serial;
+      const next = forcedTheme || await getEmployeePortalTheme();
+
+      if (!active || requestId !== serial) return;
+
+      const current =
+        document.documentElement.dataset.cosmicTheme || '';
+
+      if (current !== next) {
+        applyCosmicTheme(next as any, false);
+      }
+    };
+
+    const onEmployeeThemeChange = (event: Event) => {
+      const next = (event as CustomEvent<string>).detail;
+      if (typeof next === 'string') {
+        void applyEmployeeTheme(next);
+      }
+    };
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === 'project-tirta-employee-portal-theme') {
+        void applyEmployeeTheme();
+      }
     };
 
     void applyEmployeeTheme();
+
     const timer = window.setInterval(() => {
       void applyEmployeeTheme();
-    }, 15000);
+    }, 5000);
+
+    window.addEventListener(
+      'project-tirta-employee-theme-change',
+      onEmployeeThemeChange,
+    );
+
+    window.addEventListener('storage', onStorage);
 
     return () => {
       active = false;
       window.clearInterval(timer);
+
+      window.removeEventListener(
+        'project-tirta-employee-theme-change',
+        onEmployeeThemeChange,
+      );
+
+      window.removeEventListener('storage', onStorage);
     };
   }, []);
 

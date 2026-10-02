@@ -3242,6 +3242,787 @@ html[data-cosmic-theme="aurora"] .pt-cosmic-auth .pt-auth-card{
 
 `;
 
+
+/* =========================================================
+   PROJECT BY TIRTA — PROFESSIONAL WEB LEGIBILITY V60
+   Web-only visual refinement.
+   Android cosmic UI is explicitly excluded.
+   ========================================================= */
+
+const PROFESSIONAL_WEB_LEGIBILITY = `
+/* ---------- WEB ONLY ROOT ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth)) {
+  color-scheme: dark !important;
+  background: var(--pt-bg-deep, #030710) !important;
+  color: var(--mx-page-text, #eef4fb) !important;
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* ---------- WEB PAGE TYPOGRAPHY ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.verify-id-page {
+  color: var(--mx-page-text, #eef4fb) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h1,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h2,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h3,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h4,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h5,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell h6,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home h1,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home h2,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home h3,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page h1,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.verify-id-page h1,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.verify-id-page h2 {
+  color: var(--mx-page-text, #f8fbff) !important;
+  -webkit-text-fill-color: var(--mx-page-text, #f8fbff) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell p,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell label,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home p,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page label,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.verify-id-page p {
+  color: var(--mx-text-secondary, #cbd7e5) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell small,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .muted,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .subtext,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .help-text,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .field-help,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home small,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page small,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.verify-id-page small {
+  color: var(--mx-text-muted, #aebbd0) !important;
+}
+
+/* ---------- PROFESSIONAL SURFACES ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .panel,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .form-panel,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .table-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .detail-panel,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .export-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .setting-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .theme-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .report-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .org-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .calendar-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .feature-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .info-box,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .quick,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .custom-theme-panel {
+  background: linear-gradient(145deg, #101a2c 0%, #0a1424 100%) !important;
+  color: var(--mx-text, #edf4fb) !important;
+  border-color: rgba(145, 171, 205, .22) !important;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, .24),
+    inset 0 1px rgba(255, 255, 255, .025) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ---------- DASHBOARD FRAME ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .panel *,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .form-panel *,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .table-card *,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .detail-panel * {
+  text-shadow: none !important;
+}
+
+/* ---------- TABLES ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .table-wrap,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell table {
+  background: rgba(6, 14, 28, .56) !important;
+  border-color: rgba(145, 171, 205, .20) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell table th {
+  background: rgba(111, 145, 188, .10) !important;
+  color: #dfe8f3 !important;
+  -webkit-text-fill-color: #dfe8f3 !important;
+  border-bottom-color: rgba(145, 171, 205, .25) !important;
+  font-weight: 800 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell table td {
+  background: transparent !important;
+  color: #eef4fb !important;
+  -webkit-text-fill-color: #eef4fb !important;
+  border-bottom-color: rgba(145, 171, 205, .12) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell table tbody tr:hover td {
+  background: rgba(214, 174, 88, .045) !important;
+}
+
+/* ---------- SIDEBAR ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar {
+  border-right: 1px solid rgba(145, 171, 205, .20) !important;
+  box-shadow: 12px 0 38px rgba(0, 0, 0, .20) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item {
+  color: #d7e0eb !important;
+  -webkit-text-fill-color: #d7e0eb !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: rgba(255, 255, 255, .055) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item.active,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item.active {
+  color: #101722 !important;
+  -webkit-text-fill-color: #101722 !important;
+  background: linear-gradient(135deg, var(--pt-accent, #d6ae58), #fff0c7) !important;
+  border-color: var(--pt-accent, #d6ae58) !important;
+  box-shadow: 0 8px 22px rgba(214, 174, 88, .15) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item.active span,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item.active svg,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .sidebar .nav-item.active path,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item.active span,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item.active svg,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .talenta-sidebar .nav-item.active path {
+  color: #101722 !important;
+  -webkit-text-fill-color: #101722 !important;
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+/* ---------- TOPBAR ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .topbar {
+  border-bottom: 1px solid rgba(145, 171, 205, .20) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .18) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .icon-btn,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .theme-control-button,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .admin-floating-action {
+  color: #e6eef8 !important;
+  -webkit-text-fill-color: #e6eef8 !important;
+  border-color: rgba(145, 171, 205, .22) !important;
+  background: rgba(255, 255, 255, .035) !important;
+  opacity: 1 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .icon-btn:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .theme-control-button:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.topbar .admin-floating-action:hover {
+  background: rgba(214, 174, 88, .12) !important;
+  border-color: rgba(214, 174, 88, .44) !important;
+  color: #fff8e7 !important;
+}
+
+/* ---------- CONTROLS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell select,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell textarea {
+  background: #0c1728 !important;
+  color: #eef5ff !important;
+  -webkit-text-fill-color: #eef5ff !important;
+  border: 1px solid #3b4c64 !important;
+  box-shadow: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input::placeholder,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell textarea::placeholder {
+  color: #9cabbf !important;
+  opacity: 1 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input:focus,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell select:focus,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell textarea:focus {
+  border-color: var(--pt-accent, #d6ae58) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pt-accent, #d6ae58) 18%, transparent) !important;
+  outline: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell option {
+  background: #0c1728 !important;
+  color: #eef5ff !important;
+}
+
+/* ---------- BUTTONS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .primary,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .portal-primary {
+  color: #111722 !important;
+  -webkit-text-fill-color: #111722 !important;
+  background: linear-gradient(135deg, var(--pt-accent, #d6ae58), #fff0c7) !important;
+  border-color: var(--pt-accent, #d6ae58) !important;
+  opacity: 1 !important;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--pt-accent, #d6ae58) 14%, transparent) !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .secondary,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .portal-secondary {
+  color: #eaf1f9 !important;
+  -webkit-text-fill-color: #eaf1f9 !important;
+  background: #172338 !important;
+  border: 1px solid rgba(145, 171, 205, .30) !important;
+  opacity: 1 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .secondary:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .portal-secondary:hover {
+  color: #ffffff !important;
+  background: #263a57 !important;
+  border-color: rgba(214, 174, 88, .58) !important;
+}
+
+/* ---------- LINKS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell a,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home a,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page a {
+  color: #f0d68c !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell a:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home a:hover,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page a:hover {
+  color: #fff2c9 !important;
+}
+
+/* ---------- STATUS / SEMANTIC COLORS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status.green,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status-active {
+  color: #8fe6c2 !important;
+  -webkit-text-fill-color: #8fe6c2 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status.orange,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status-warning {
+  color: #ffd27e !important;
+  -webkit-text-fill-color: #ffd27e !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status.red,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status-inactive {
+  color: #ffadb8 !important;
+  -webkit-text-fill-color: #ffadb8 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .status.blue {
+  color: #9bc8ff !important;
+  -webkit-text-fill-color: #9bc8ff !important;
+}
+
+/* ---------- MODALS / DRAWERS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.drawer,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.edit-drawer,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.employee-detail-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.profile-panel,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.simple-modal,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.modal-card {
+  background: #0d1728 !important;
+  color: #edf4fb !important;
+  border-color: rgba(145, 171, 205, .26) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .42) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.drawer input,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.drawer select,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.drawer textarea,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.edit-drawer input,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.edit-drawer select,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.edit-drawer textarea {
+  background: #111d31 !important;
+  color: #f0f5fc !important;
+  -webkit-text-fill-color: #f0f5fc !important;
+  border-color: #52627a !important;
+}
+
+/* ---------- LOGIN / PUBLIC ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.registration-card {
+  background: linear-gradient(145deg, #101a2c, #0a1424) !important;
+  color: #eef4fb !important;
+  border-color: rgba(145, 171, 205, .24) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .38) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-heading h1,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-card .unified-brand strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-heading p,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-card .unified-brand small {
+  color: #bdc9d8 !important;
+  -webkit-text-fill-color: #bdc9d8 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-form label > span {
+  color: #dbe5f0 !important;
+  -webkit-text-fill-color: #dbe5f0 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-form input {
+  background: #0c1728 !important;
+  color: #f1f6fd !important;
+  -webkit-text-fill-color: #f1f6fd !important;
+  border-color: #3b4c64 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-form input::placeholder {
+  color: #9cabbf !important;
+  opacity: 1 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-button {
+  background: linear-gradient(135deg, var(--pt-accent, #d6ae58), #fff0c7) !important;
+  color: #111722 !important;
+  -webkit-text-fill-color: #111722 !important;
+  border-color: var(--pt-accent, #d6ae58) !important;
+  opacity: 1 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-register,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-security small {
+  color: #aebbd0 !important;
+  -webkit-text-fill-color: #aebbd0 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-register button,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.password-toggle,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.login-options > button {
+  color: #f0d68c !important;
+  -webkit-text-fill-color: #f0d68c !important;
+}
+
+/* ---------- FOCUS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell button:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell select:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell textarea:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page button:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--pt-accent, #d6ae58) 48%, transparent) !important;
+  outline-offset: 2px !important;
+}
+
+/* ---------- DISABLED ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell button:disabled,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input:disabled,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell select:disabled,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell textarea:disabled {
+  opacity: .62 !important;
+  cursor: not-allowed !important;
+}
+
+/* =========================================================
+   PROJECT BY TIRTA — PROFESSIONAL WEB CONTRAST GUARD V61
+   Web-only final readability guard.
+   Android cosmic UI remains untouched.
+   ========================================================= */
+
+/* ---------- GENERIC TEXT ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .text-muted,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .text-secondary,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .secondary-text,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .description,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .subtitle,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .caption,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .helper-text {
+  color: #b8c6d8 !important;
+  -webkit-text-fill-color: #b8c6d8 !important;
+}
+
+/* ---------- COMMON FORM TEXT ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell label,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .form-label,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .field-label,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .input-label {
+  color: #d9e3ef !important;
+  -webkit-text-fill-color: #d9e3ef !important;
+}
+
+/* ---------- COMMON VALUE / DATA TEXT ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .value,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .data-value,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .stat-value,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .metric-value {
+  color: #f2f6fb !important;
+  -webkit-text-fill-color: #f2f6fb !important;
+}
+
+/* ---------- EMPTY / LOADING / NOTICE ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .empty-state,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .empty-state p,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .loading-state,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .notice,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .info-message {
+  color: #c5d1df !important;
+  -webkit-text-fill-color: #c5d1df !important;
+}
+
+/* ---------- ALERTS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .alert-error,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .error-message,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .danger-message {
+  color: #ffb8c2 !important;
+  -webkit-text-fill-color: #ffb8c2 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .alert-success,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .success-message {
+  color: #98e7c8 !important;
+  -webkit-text-fill-color: #98e7c8 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .alert-warning,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .warning-message {
+  color: #ffd48c !important;
+  -webkit-text-fill-color: #ffd48c !important;
+}
+
+/* ---------- BADGES / CHIPS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .badge,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .chip,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .tag {
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* Status badges with dark surfaces */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .badge.success,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .chip.success,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .tag.success {
+  color: #9be8cb !important;
+  -webkit-text-fill-color: #9be8cb !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .badge.warning,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .chip.warning,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .tag.warning {
+  color: #ffd58d !important;
+  -webkit-text-fill-color: #ffd58d !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .badge.danger,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .chip.danger,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .tag.danger {
+  color: #ffb6c0 !important;
+  -webkit-text-fill-color: #ffb6c0 !important;
+}
+
+/* ---------- LINKS INSIDE DATA ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell td a,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .table-wrap a,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .detail-panel a {
+  color: #f1d58f !important;
+  -webkit-text-fill-color: #f1d58f !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 2px !important;
+}
+
+/* ---------- BUTTON ICONS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell button svg,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .icon-btn svg {
+  opacity: 1 !important;
+}
+
+/* ---------- FILE INPUT ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="file"] {
+  color: #e7eef7 !important;
+  -webkit-text-fill-color: #e7eef7 !important;
+  background: #0c1728 !important;
+  border-color: #3b4c64 !important;
+}
+
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="file"]::file-selector-button {
+  color: #111722 !important;
+  background: #d6ae58 !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  padding: 7px 11px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+/* ---------- NATIVE CONTROL READABILITY ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="date"],
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="datetime-local"],
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="time"],
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell input[type="month"] {
+  color-scheme: dark !important;
+  color: #eef5ff !important;
+  -webkit-text-fill-color: #eef5ff !important;
+}
+
+/* ---------- HR / DIVIDERS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell hr,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .divider {
+  border-color: rgba(145,171,205,.18) !important;
+  background: rgba(145,171,205,.18) !important;
+}
+
+/* ---------- SELECTION ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell ::selection,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.public-home ::selection,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.unified-login-page ::selection {
+  background: rgba(214,174,88,.34) !important;
+  color: #ffffff !important;
+}
+
+/* ---------- FOCUS FOR CUSTOM INTERACTIVE ELEMENTS ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell [role="button"]:focus-visible,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell [tabindex]:focus-visible {
+  outline: 3px solid rgba(214,174,88,.50) !important;
+  outline-offset: 2px !important;
+}
+
+/* ---------- PROFESSIONAL SURFACE CONSISTENCY ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .section-card,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .content-card {
+  color: #edf4fb !important;
+  border-color: rgba(145,171,205,.20) !important;
+}
+
+/* Avoid accidental bright/white native surfaces in the professional shell */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .card input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .card select,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell .card textarea {
+  background: #0c1728 !important;
+  color: #eef5ff !important;
+  -webkit-text-fill-color: #eef5ff !important;
+}
+
+/* ---------- FINAL BODY READABILITY ---------- */
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell strong,
+body:not(:has(.pt-cosmic-shell)):not(:has(.pt-cosmic-auth))
+.talenta-shell b {
+  color: #f3f7fc !important;
+  -webkit-text-fill-color: #f3f7fc !important;
+}
+
+`;
+
 export const COSMIC_THEMES = {
   "sun": {
     "name": "Matahari",
@@ -3306,7 +4087,7 @@ export function installProjectByTirtaTheme(): void {
   if (document.getElementById(styleId)) return;
   const style = document.createElement('style');
   style.id = styleId;
-  style.textContent = LEGACY_STYLES + '\n\n' + FUTURE_STYLES + `
+  style.textContent = LEGACY_STYLES + '\n\n' + FUTURE_STYLES + PROFESSIONAL_WEB_LEGIBILITY + `
 
       /* =====================================================
          LOADING NO CARD V57.10
@@ -3855,7 +4636,8 @@ export function applyCosmicTheme(themeId: CosmicThemeId, persist = true): void {
 export function initializeCosmicTheme(): void {
   installProjectByTirtaTheme();
 
-  /* =========================================================
+
+      /* =========================================================
      V58.1 — GLOBAL PAGE BACKGROUND
      Area luar card mengikuti background tema aktif.
      ========================================================= */
@@ -3863,6 +4645,141 @@ export function initializeCosmicTheme(): void {
     const pageBackgroundFix = document.createElement('style');
     pageBackgroundFix.id = 'pt-global-page-background-v581';
     pageBackgroundFix.textContent = `
+
+      /* =========================================================
+         COSMIC CARD GUARD V62
+         6 tema Employee: tidak ada card putih.
+         Professional tidak tersentuh.
+         ========================================================= */
+
+      html[data-cosmic-theme="sun"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,#3a2611,#211306) !important;
+        color:#fff7e8 !important;
+        border-color:rgba(246,199,103,.42) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      html[data-cosmic-theme="moon"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,#102a4b,#07172d) !important;
+        color:#f4f8ff !important;
+        border-color:rgba(131,189,251,.36) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      html[data-cosmic-theme="galaxy"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,#28164f,#100a25) !important;
+        color:#fbf7ff !important;
+        border-color:rgba(215,173,255,.40) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      html[data-cosmic-theme="blackhole"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,#111c23,#05080c) !important;
+        color:#f3f9fc !important;
+        border-color:rgba(99,215,255,.34) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      html[data-cosmic-theme="nebula"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,#3b1740,#1b0a22) !important;
+        color:#fff4fc !important;
+        border-color:rgba(255,191,232,.36) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      html[data-cosmic-theme="aurora"] .employee-portal
+      :where([class*="card"],[class*="panel"],[class*="module"]) {
+        background:linear-gradient(145deg,rgba(7,32,35,.96),rgba(4,18,27,.96)) !important;
+        color:#effff9 !important;
+        border-color:rgba(106,255,207,.32) !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+
+      /* Kontrol form tetap kontras dan tidak ikut putih. */
+      html[data-cosmic-theme="sun"] .employee-portal
+      input,
+      html[data-cosmic-theme="sun"] .employee-portal
+      select,
+      html[data-cosmic-theme="sun"] .employee-portal
+      textarea {
+        background:#2a1808 !important;
+        color:#fff6e8 !important;
+        border-color:rgba(246,199,103,.32) !important;
+      }
+
+      html[data-cosmic-theme="moon"] .employee-portal
+      input,
+      html[data-cosmic-theme="moon"] .employee-portal
+      select,
+      html[data-cosmic-theme="moon"] .employee-portal
+      textarea {
+        background:#081b34 !important;
+        color:#f3f8ff !important;
+        border-color:rgba(131,189,251,.30) !important;
+      }
+
+      html[data-cosmic-theme="galaxy"] .employee-portal
+      input,
+      html[data-cosmic-theme="galaxy"] .employee-portal
+      select,
+      html[data-cosmic-theme="galaxy"] .employee-portal
+      textarea {
+        background:#140b2c !important;
+        color:#fbf8ff !important;
+        border-color:rgba(215,173,255,.30) !important;
+      }
+
+      html[data-cosmic-theme="blackhole"] .employee-portal
+      input,
+      html[data-cosmic-theme="blackhole"] .employee-portal
+      select,
+      html[data-cosmic-theme="blackhole"] .employee-portal
+      textarea {
+        background:#060d12 !important;
+        color:#f2f8fb !important;
+        border-color:rgba(99,215,255,.28) !important;
+      }
+
+      html[data-cosmic-theme="nebula"] .employee-portal
+      input,
+      html[data-cosmic-theme="nebula"] .employee-portal
+      select,
+      html[data-cosmic-theme="nebula"] .employee-portal
+      textarea {
+        background:#210b27 !important;
+        color:#fff5fc !important;
+        border-color:rgba(255,191,232,.28) !important;
+      }
+
+      html[data-cosmic-theme="aurora"] .employee-portal
+      input,
+      html[data-cosmic-theme="aurora"] .employee-portal
+      select,
+      html[data-cosmic-theme="aurora"] .employee-portal
+      textarea {
+        background:#06161b !important;
+        color:#effff9 !important;
+        border-color:rgba(106,255,207,.28) !important;
+      }
+
+
       .admin-page-frame,
       .talenta-shell,
       .talenta-main,

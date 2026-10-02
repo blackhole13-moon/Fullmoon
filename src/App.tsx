@@ -5,7 +5,12 @@ import { isSupabaseConfigured, supabase } from './lib/supabase/client';
 import { signIn } from './lib/auth';
 import { checkForAppUpdate } from './lib/app-update';
 import { useTranslation } from './locales/LanguageContext';
-import { loadUserThemePreference, getPublicAppTheme } from './lib/userPreferences';
+import {
+  loadUserThemePreference,
+  getPublicAppTheme,
+  getEmployeePortalTheme,
+  type PublicAppTheme
+} from './lib/userPreferences';
 import './styles/login-safe-background.css';
 
 import moonLogo from './assets/moon-logo.svg';
@@ -22,6 +27,18 @@ import VerifyIdCard from './pages/VerifyIdCard/VerifyIdCard';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 const IS_ANDROID_APP = Capacitor.getPlatform() === 'android';
+
+const applyPublicAppTheme = (theme: PublicAppTheme) => {
+  if (typeof document === 'undefined') return;
+
+  if (theme === 'professional') {
+    document.documentElement.removeAttribute('data-cosmic-theme');
+    return;
+  }
+
+  applyCosmicTheme(theme, false);
+};
+
 
 type View = 'home' | 'login' | 'admin' | 'employee' | 'register' | 'reset-password' | 'verify';
 
@@ -160,28 +177,52 @@ const { t } = useTranslation();
 
   useEffect(() => {
     installLoadingStyles();
+
     if (!IS_ANDROID_APP) return;
 
+    // Inisialisasi shell Android saja.
+    // Sinkronisasi PUBLIC THEME dipindahkan ke effect khusus
+    // agar tidak pernah menimpa tema Portal Karyawan.
     initializeCosmicTheme();
+  }, []);
+
+  const [view, setView] = useState<View>('home');
+
+  // =======================================================
+  // ANDROID PUBLIC THEME
+  // Hanya aktif pada halaman publik/login/register.
+  // Tidak boleh berjalan di dashboard Admin/Karyawan.
+  // =======================================================
+
+  useEffect(() => {
+    if (
+      !IS_ANDROID_APP ||
+      !['home', 'login', 'register'].includes(view)
+    ) {
+      return;
+    }
+
     let active = true;
 
-    const refreshAndroidPublicTheme = async () => {
+    const refreshPublicTheme = async () => {
       const next = await getPublicAppTheme();
-      if (active) applyCosmicTheme(next, false);
+
+      if (!active) return;
+
+      applyPublicAppTheme(next);
     };
 
-    void refreshAndroidPublicTheme();
+    void refreshPublicTheme();
+
     const timer = window.setInterval(() => {
-      void refreshAndroidPublicTheme();
+      void refreshPublicTheme();
     }, 15000);
 
     return () => {
       active = false;
       window.clearInterval(timer);
     };
-  }, []);
-
-  const [view, setView] = useState<View>('home');
+  }, [view]);
   const [loginOpen, setLoginOpen] = useState(false);
 
   const [email, setEmail] = useState('');
@@ -218,7 +259,9 @@ const { t } = useTranslation();
      ======================================================= */
 
   useEffect(() => {
-    void checkForAppUpdate();
+    void checkForAppUpdate().catch((error) => {
+      console.warn('App update check failed:', error);
+    });
 
     let active = true;
     let bootExpired = false;
@@ -315,7 +358,7 @@ const { t } = useTranslation();
       if (data.session.user.id) {
         if (IS_ANDROID_APP) {
           if (account.view === 'employee') {
-            applyCosmicTheme(await getPublicAppTheme(), false);
+            applyCosmicTheme(await getEmployeePortalTheme(), false);
           } else if (account.view === 'admin') {
             applyCosmicTheme(await loadUserThemePreference(data.session.user.id), false);
           }
@@ -328,7 +371,20 @@ const { t } = useTranslation();
       setChecking(false);
     };
 
-    void boot();
+    void boot().catch((error) => {
+      console.error('APP_BOOT_ERROR:', error);
+
+      if (!active || bootExpired) return;
+
+      window.clearTimeout(bootTimeout);
+
+      setView(IS_ANDROID_APP ? 'login' : 'home');
+      setLoginOpen(IS_ANDROID_APP);
+      setChecking(false);
+      setError('Sesi awal tidak dapat diperiksa. Silakan coba lagi.');
+
+      window.location.hash = IS_ANDROID_APP ? '/login' : '/';
+    });
 
     /* =====================================================
        AUTH STATE LISTENER
@@ -369,7 +425,7 @@ const { t } = useTranslation();
             setChecking(false);
 
             if (IS_ANDROID_APP) {
-              void getPublicAppTheme().then(theme => applyCosmicTheme(theme, false));
+              void getPublicAppTheme().then(applyPublicAppTheme);
             }
 
             window.location.hash = IS_ANDROID_APP ? '/login' : '/';
@@ -389,7 +445,7 @@ const { t } = useTranslation();
 
             if (session.user.id && IS_ANDROID_APP) {
               if (account.view === 'employee') {
-                applyCosmicTheme(await getPublicAppTheme(), false);
+                applyCosmicTheme(await getEmployeePortalTheme(), false);
               } else if (account.view === 'admin') {
                 applyCosmicTheme(await loadUserThemePreference(session.user.id), false);
               }
@@ -460,7 +516,7 @@ const { t } = useTranslation();
 
     if (data.user.id && IS_ANDROID_APP) {
       if (account.view === 'employee') {
-        applyCosmicTheme(await getPublicAppTheme(), false);
+        applyCosmicTheme(await getEmployeePortalTheme(), false);
       } else if (account.view === 'admin') {
         applyCosmicTheme(await loadUserThemePreference(data.user.id), false);
       }
@@ -478,7 +534,12 @@ const { t } = useTranslation();
      ======================================================= */
 
   if (checking) {
-    return <AppLoadingScreen message={t('checking_security_session')} />;
+    return (
+      <AppLoadingScreen
+        message={t('checking_security_session')}
+        android={IS_ANDROID_APP}
+      />
+    );
   }
 
   /* =======================================================
@@ -501,7 +562,7 @@ const { t } = useTranslation();
             onMasuk={() => {
               setError('');
               if (IS_ANDROID_APP) {
-                void getPublicAppTheme().then(theme => applyCosmicTheme(theme, false));
+                void getPublicAppTheme().then(applyPublicAppTheme);
               }
               setLoginOpen(true);
             }}
@@ -591,9 +652,19 @@ const { t } = useTranslation();
 }
 
 
-function AppLoadingScreen({ message }: { message: string }) {
+function AppLoadingScreen({
+  message,
+  android = false,
+}: {
+  message: string;
+  android?: boolean;
+}) {
   return (
-    <main className="app-loading-screen pt-cosmic-auth" aria-label={message || 'Loading'} role="status">
+    <main
+      className={`app-loading-screen${android ? ' pt-cosmic-auth' : ''}`}
+      aria-label={message || 'Loading'}
+      role="status"
+    >
       <div className="pt-loading-brand">
         <img src={moonLogo} alt="Project by Tirta" />
         <strong>Project by Tirta</strong>
