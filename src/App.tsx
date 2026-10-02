@@ -9,13 +9,14 @@ import {
   loadUserThemePreference,
   getPublicAppTheme,
   getEmployeePortalTheme,
+  applyProjectTheme,
   type PublicAppTheme
 } from './lib/userPreferences';
 import './styles/login-safe-background.css';
 
 import moonLogo from './assets/moon-logo.svg';
 import AndroidCosmicBackground from './components/karyawan/dashboard/AndroidCosmicBackground';
-import { applyCosmicTheme, initializeCosmicTheme } from './theme/professionalTheme';
+import { initializeCosmicTheme } from './theme/professionalTheme';
 import { installLoadingStyles } from './loading-real-final-v57.15';
 
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
@@ -29,14 +30,7 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 const IS_ANDROID_APP = Capacitor.getPlatform() === 'android';
 
 const applyPublicAppTheme = (theme: PublicAppTheme) => {
-  if (typeof document === 'undefined') return;
-
-  if (theme === 'professional') {
-    document.documentElement.removeAttribute('data-cosmic-theme');
-    return;
-  }
-
-  applyCosmicTheme(theme, false);
+  applyProjectTheme(theme, false);
 };
 
 
@@ -358,9 +352,9 @@ const { t } = useTranslation();
       if (data.session.user.id) {
         if (IS_ANDROID_APP) {
           if (account.view === 'employee') {
-            applyCosmicTheme(await getEmployeePortalTheme(), false);
+            applyProjectTheme(await getEmployeePortalTheme(), false);
           } else if (account.view === 'admin') {
-            applyCosmicTheme(await loadUserThemePreference(data.session.user.id), false);
+            applyProjectTheme(await loadUserThemePreference(data.session.user.id), false);
           }
         }
       }
@@ -445,9 +439,9 @@ const { t } = useTranslation();
 
             if (session.user.id && IS_ANDROID_APP) {
               if (account.view === 'employee') {
-                applyCosmicTheme(await getEmployeePortalTheme(), false);
+                applyProjectTheme(await getEmployeePortalTheme(), false);
               } else if (account.view === 'admin') {
-                applyCosmicTheme(await loadUserThemePreference(session.user.id), false);
+                applyProjectTheme(await loadUserThemePreference(session.user.id), false);
               }
             }
 
@@ -516,9 +510,9 @@ const { t } = useTranslation();
 
     if (data.user.id && IS_ANDROID_APP) {
       if (account.view === 'employee') {
-        applyCosmicTheme(await getEmployeePortalTheme(), false);
+        applyProjectTheme(await getEmployeePortalTheme(), false);
       } else if (account.view === 'admin') {
-        applyCosmicTheme(await loadUserThemePreference(data.user.id), false);
+        applyProjectTheme(await loadUserThemePreference(data.user.id), false);
       }
     }
 

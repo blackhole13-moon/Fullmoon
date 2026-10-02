@@ -7,6 +7,7 @@ import { registerPwa } from './pwa';
 import { initializeCosmicTheme, installProjectByTirtaTheme } from './theme/professionalTheme';
 import { installLoadingStyles } from './loading-real-final-v57.15';
 import { installProjectTirtaAndroidPolish } from './theme/projectTirtaAndroidPolish';
+import { installProjectTirtaDashboardVisual } from './theme/projectTirtaDashboardVisual';
 
 import './styles/android-cosmic-background.css';
 registerPwa();
@@ -17,6 +18,9 @@ registerPwa();
 //
 
 installProjectByTirtaTheme();
+if (Capacitor.getPlatform() !== 'android') {
+  installProjectTirtaDashboardVisual();
+}
 if (Capacitor.getPlatform() === 'android') {
   initializeCosmicTheme();
   installProjectTirtaAndroidPolish();

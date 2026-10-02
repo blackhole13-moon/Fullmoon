@@ -1,3 +1,9 @@
+import sunArt from '../assets/cosmic/cosmic-sun.webp';
+import moonArt from '../assets/cosmic/cosmic-moon.webp';
+import galaxyArt from '../assets/cosmic/cosmic-galaxy.webp';
+import blackholeArt from '../assets/cosmic/cosmic-blackhole.webp';
+import nebulaArt from '../assets/cosmic/cosmic-nebula.webp';
+
 /**
  * Project by Tirta — Cosmic dashboard visual layer.
  * Additive runtime CSS only. No business logic or routing changes.
@@ -293,6 +299,164 @@ export function installProjectTirtaDashboardVisual(): void {
       .stat-card:hover,
       .quick:hover { transform: none !important; }
     }
+
+    /* =========================================================
+       PROJECT BY TIRTA — REFERENCE DASHBOARD V2
+       Desktop Web only. Professional has no data-cosmic-theme,
+       so it remains on the original professional visual system.
+       ========================================================= */
+
+    html[data-cosmic-theme="sun"] .talenta-shell,
+    html[data-cosmic-theme="sun"] .talenta-main,
+    html[data-cosmic-theme="sun"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(3,8,18,.30),rgba(3,8,18,.68)),
+        url("${sunArt}") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme="moon"] .talenta-shell,
+    html[data-cosmic-theme="moon"] .talenta-main,
+    html[data-cosmic-theme="moon"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(2,8,20,.26),rgba(2,8,20,.68)),
+        url("${moonArt}") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme="galaxy"] .talenta-shell,
+    html[data-cosmic-theme="galaxy"] .talenta-main,
+    html[data-cosmic-theme="galaxy"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(8,2,22,.24),rgba(8,2,22,.70)),
+        url("${galaxyArt}") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme="blackhole"] .talenta-shell,
+    html[data-cosmic-theme="blackhole"] .talenta-main,
+    html[data-cosmic-theme="blackhole"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(0,3,8,.18),rgba(0,3,8,.74)),
+        url("${blackholeArt}") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme="nebula"] .talenta-shell,
+    html[data-cosmic-theme="nebula"] .talenta-main,
+    html[data-cosmic-theme="nebula"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(10,2,17,.24),rgba(10,2,17,.72)),
+        url("${nebulaArt}") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme="aurora"] .talenta-shell,
+    html[data-cosmic-theme="aurora"] .talenta-main,
+    html[data-cosmic-theme="aurora"] .admin-page-frame {
+      background-image:
+        linear-gradient(rgba(0,7,11,.16),rgba(0,7,11,.62)),
+        url("/aurora-background.webp") !important;
+      background-position:center center !important;
+      background-size:cover !important;
+      background-repeat:no-repeat !important;
+      background-attachment:fixed !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard {
+      max-width:1440px !important;
+      margin:0 auto !important;
+      padding:22px 26px 32px !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .executive-stats {
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:14px !important;
+      margin:14px 0 !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .stat-card,
+    html[data-cosmic-theme] .executive-dashboard .panel {
+      background:rgba(5,16,38,.70) !important;
+      border:1px solid color-mix(in srgb,var(--pt-accent-2) 30%,transparent) !important;
+      box-shadow:0 20px 55px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.045) !important;
+      backdrop-filter:blur(13px) saturate(120%) !important;
+      -webkit-backdrop-filter:blur(13px) saturate(120%) !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .stat-card {
+      min-height:128px !important;
+      padding:17px !important;
+      border-radius:20px !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .panel {
+      border-radius:20px !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .dashboard-grid-top {
+      grid-template-columns:minmax(0,1.72fr) minmax(300px,.72fr) !important;
+      gap:14px !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .dashboard-grid-bottom {
+      grid-template-columns:minmax(0,1.35fr) minmax(300px,.85fr) !important;
+      gap:14px !important;
+      margin-top:14px !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .command-strip {
+      min-height:92px !important;
+      padding:17px 20px !important;
+      border-radius:20px !important;
+      border:1px solid color-mix(in srgb,var(--pt-accent) 36%,transparent) !important;
+      background:linear-gradient(135deg,color-mix(in srgb,var(--pt-accent-2) 18%,transparent),rgba(4,14,32,.68)) !important;
+      box-shadow:0 22px 60px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.05) !important;
+      backdrop-filter:blur(16px) saturate(120%) !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .quick-action {
+      min-height:52px !important;
+      margin:7px 14px !important;
+      border-radius:13px !important;
+      background:rgba(255,255,255,.035) !important;
+      border:1px solid rgba(255,255,255,.08) !important;
+      color:#f5f8ff !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard h1,
+    html[data-cosmic-theme] .executive-dashboard h2,
+    html[data-cosmic-theme] .executive-dashboard h3,
+    html[data-cosmic-theme] .executive-dashboard strong {
+      color:#f7fbff !important;
+    }
+
+    html[data-cosmic-theme] .executive-dashboard .panel-head p,
+    html[data-cosmic-theme] .executive-dashboard .dept-row span {
+      color:#9eb2cd !important;
+    }
+
+    @media(max-width:1200px){
+      html[data-cosmic-theme] .executive-dashboard .executive-stats {
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      }
+    }
+
   `;
 
   document.head.appendChild(style);

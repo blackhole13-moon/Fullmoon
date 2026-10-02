@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from '../../../locales/LanguageContext';
 import { supabase } from '../../../lib/supabase/client';
-import { getEmployeePortalTheme } from '../../../lib/userPreferences';
-import { applyCosmicTheme } from '../../../theme/professionalTheme';
+import { getEmployeePortalTheme, applyProjectTheme } from '../../../lib/userPreferences';
 
 import moonLogo from '../../../assets/moon-logo.svg';
 import SuggestionBox from '../../../features/employee-feedback/SuggestionBox';
@@ -38,7 +37,7 @@ export default function PortalKaryawan({onLogout}:{onLogout?:()=>void}){
         document.documentElement.dataset.cosmicTheme || '';
 
       if (current !== next) {
-        applyCosmicTheme(next as any, false);
+        applyProjectTheme(next as Parameters<typeof applyProjectTheme>[0], false);
       }
     };
 

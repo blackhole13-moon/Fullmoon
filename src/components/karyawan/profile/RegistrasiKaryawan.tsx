@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import AndroidCosmicBackground from '../dashboard/AndroidCosmicBackground';
 import moonLogo from '../../../assets/moon-logo.png';
-import cosmicBackground from '../../../assets/cosmic-background.svg';
 import { supabase } from '../../../lib/supabase/client';
 import { useTranslation } from '../../../locales/LanguageContext';
 
@@ -295,7 +294,6 @@ export default function RegistrasiKaryawan({ onBack }: RegistrasiKaryawanProps) 
     return (
       <div
       className={`registration-page${IS_ANDROID_APP ? ' pt-cosmic-register' : ''}`}
-      style={IS_ANDROID_APP ? { backgroundImage: `url(${cosmicBackground})` } : undefined}
     >
         <AndroidCosmicBackground />
         <div className="registration-success">

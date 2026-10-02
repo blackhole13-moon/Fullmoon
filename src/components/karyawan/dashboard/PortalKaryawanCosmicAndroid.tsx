@@ -2,8 +2,7 @@ import '../../../styles/android-id-card.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from '../../../locales/LanguageContext';
 import { supabase } from '../../../lib/supabase/client';
-import { getEmployeePortalTheme } from '../../../lib/userPreferences';
-import { applyCosmicTheme } from '../../../theme/professionalTheme';
+import { getEmployeePortalTheme, applyProjectTheme } from '../../../lib/userPreferences';
 import { cacheAttendance, cacheEmployee, countOfflineAttendance, enqueueOfflineAttendance, getCachedAttendance, getCachedEmployee, syncOfflineAttendance } from '../../../lib/androidOfflineAttendance';
 
 import moonLogo from '../../../assets/moon-logo.svg';
@@ -126,7 +125,7 @@ export default function PortalKaryawan({onLogout}:{onLogout?:()=>void}){
 
       // Reapply only when the server theme actually changed.
       if (current !== next) {
-        applyCosmicTheme(next, false);
+        applyProjectTheme(next, false);
       }
     };
 

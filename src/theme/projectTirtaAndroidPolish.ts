@@ -931,6 +931,118 @@ html[data-cosmic-theme="nebula"] .pt-cosmic-shell::before {
   to   { transform:translate3d(1%,-1%,0) scale(1.04); opacity:1; }
 }
 
+
+/* =========================================================
+   ANDROID FINAL LOGIN / REGISTRATION ROOT OVERRIDE V64
+   Runtime style is appended after professionalTheme, therefore
+   these !important rules intentionally win over old card styles.
+   ========================================================= */
+
+html[data-cosmic-theme] body:has(.pt-cosmic-auth),
+html[data-cosmic-theme] #root:has(.pt-cosmic-auth),
+html[data-cosmic-theme] body:has(.pt-cosmic-register),
+html[data-cosmic-theme] #root:has(.pt-cosmic-register) {
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+}
+
+@media(max-width:899px){
+  html[data-cosmic-theme] .pt-cosmic-auth,
+  html[data-cosmic-theme] .pt-cosmic-register {
+    position:relative !important;
+    isolation:isolate !important;
+    min-height:100dvh !important;
+    width:100vw !important;
+    background:transparent !important;
+    background-color:transparent !important;
+    background-image:none !important;
+  }
+
+  html[data-cosmic-theme] .pt-cosmic-auth > .pt-android-cosmic-bg,
+  html[data-cosmic-theme] .pt-cosmic-register > .pt-android-cosmic-bg {
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100dvh !important;
+    z-index:0 !important;
+    pointer-events:none !important;
+    background:transparent !important;
+  }
+
+  /* Remove only the OUTER login wrapper. Inputs/buttons remain. */
+  html[data-cosmic-theme] .pt-cosmic-auth > .login-modal-card,
+  html[data-cosmic-theme] .pt-cosmic-auth > .pt-auth-card,
+  html[data-cosmic-theme] .pt-cosmic-auth > .unified-login-card {
+    position:relative !important;
+    z-index:10 !important;
+    background:transparent !important;
+    background-color:transparent !important;
+    background-image:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  /* Registration outer card must never become a black rectangle. */
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-shell,
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-card,
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-content,
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-panel {
+    background:transparent !important;
+    background-color:transparent !important;
+    background-image:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-section {
+    background:transparent !important;
+    background-color:transparent !important;
+    background-image:none !important;
+    border:0 !important;
+    box-shadow:none !important;
+  }
+
+  /* Preserve readable controls, but never recreate a giant card. */
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-field input,
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-field select,
+  html[data-cosmic-theme] body:has(.pt-cosmic-register) .registration-field textarea {
+    background:rgba(5,15,30,.55) !important;
+    color:#f4f8ff !important;
+    border:1px solid color-mix(in srgb,var(--pt-accent) 38%,transparent) !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  /* Aurora is a static photo only — no atmosphere or star overlays. */
+  html[data-cosmic-theme="aurora"] .pt-android-cosmic-bg > div:nth-child(2),
+  html[data-cosmic-theme="aurora"] .pt-android-cosmic-bg > div:nth-child(3) {
+    display:none !important;
+    visibility:hidden !important;
+    opacity:0 !important;
+    animation:none !important;
+    transform:none !important;
+  }
+
+  html[data-cosmic-theme="aurora"] .pt-android-cosmic-bg > div:first-child {
+    background-image:url("/aurora-background.webp") !important;
+    background-repeat:no-repeat !important;
+    background-position:center center !important;
+    background-size:100% 100% !important;
+    opacity:1 !important;
+    filter:none !important;
+    animation:none !important;
+    transform:none !important;
+  }
+}
+
 `;
 
   document.head.appendChild(style);

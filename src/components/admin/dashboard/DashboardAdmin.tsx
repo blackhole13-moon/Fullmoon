@@ -25,10 +25,12 @@ import { appAlert, appConfirm, appPrompt } from '../../../lib/app-dialog';
 import AdminAnnouncementManager from '../../../features/announcements/AdminAnnouncementManager';
 import type { Announcement } from '../../../features/announcements/types';
 import AttendanceUnified from './AttendanceUnified';
-import { applyCosmicTheme, getCosmicTheme, COSMIC_THEMES, type CosmicThemeId } from '../../../theme/professionalTheme';
+import { getCosmicTheme, COSMIC_THEMES, type CosmicThemeId } from '../../../theme/professionalTheme';
 import {
   loadUserThemePreference,
   saveUserThemePreference,
+  getPublicAppTheme,
+  applyProjectTheme,
   setEmployeePortalTheme,
   setPublicAppTheme,
   saveCustomThemeCache
@@ -59,6 +61,10 @@ type Karyawan = {
   auth_user_id?: string | null;
   email_terverifikasi?: boolean;
   foto_url?: string | null;
+  bpjs_kesehatan?: string | null;
+  bpjs_ketenagakerjaan?: string | null;
+  bpjs_kesehatan_card_path?: string | null;
+  bpjs_ketenagakerjaan_card_path?: string | null;
   created_at?: string;
 };
 
@@ -691,7 +697,7 @@ export default function DashboardAdmin() {
       const userId = session.session?.user?.id;
       if (!userId) return;
       const next = await loadUserThemePreference(userId);
-      if (active) applyCosmicTheme(next, false);
+      if (active) applyProjectTheme(next, false);
     };
     void loadTheme();
     return () => {
@@ -1013,6 +1019,15 @@ export default function DashboardAdmin() {
       if (payload[key] === '') payload[key] = null;
     }
 
+    if (
+      payload.role !== undefined &&
+      String(payload.role || '') !== String(editing.role || '') &&
+      userRole !== 'Super Admin'
+    ) {
+      setError('Perubahan Role hanya dapat dilakukan oleh Super Admin.');
+      return false;
+    }
+
     const { error: e } = await supabase
       .from('karyawan')
       .update(payload)
@@ -1021,6 +1036,23 @@ export default function DashboardAdmin() {
     if (e) {
       setError(e.message);
       return false;
+    }
+
+    if (
+      payload.role !== undefined &&
+      String(payload.role || '') !== String(editing.role || '') &&
+      editing.auth_user_id &&
+      userRole === 'Super Admin'
+    ) {
+      const { error: roleError } = await supabase
+        .from('hris_users')
+        .update({ role: String(payload.role) })
+        .eq('id', editing.auth_user_id);
+
+      if (roleError) {
+        setError(`Data karyawan tersimpan, tetapi Role login gagal diperbarui: ${roleError.message}`);
+        return false;
+      }
     }
 
     setEditing(null);
@@ -1524,7 +1556,7 @@ return (
     {menu==='system-health'&&<SystemHealth/>}
     {menu==='enterprise-v20'&&<EnterpriseV20 employees={employees}/>}
     {menu==='security-v21'&&<SecurityCenterV21/>}  
-    {editing&&<EmployeeEditor employee={editing} onClose={()=>setEditing(null)} onSave={saveEdit}/>}
+    {editing&&<EmployeeEditor employee={editing} userRole={userRole} onClose={()=>setEditing(null)} onSave={saveEdit}/>}
     {toast&&<button className="toast" onClick={()=>setToast('')}>{toast} ×</button>}
       </section>
     </main>
@@ -1663,6 +1695,10 @@ function Employees({data,onDelete,onEdit,onExport,onAdd}:{data:Karyawan[];onDele
   ["status_aktif","Status Aktif"],
   ["gaji_pokok","Gaji Pokok"],
   ["role","Role"],
+  ["bpjs_kesehatan","BPJS Kesehatan"],
+  ["bpjs_ketenagakerjaan","BPJS Ketenagakerjaan"],
+  ["bpjs_kesehatan_card_path","Kartu BPJS Kesehatan"],
+  ["bpjs_ketenagakerjaan_card_path","Kartu BPJS Ketenagakerjaan"],
   ["email_terverifikasi","Email Terverifikasi"]
  ] as const;
  const [selected,setSelected]=useState<string[]>(available.slice(0,9).map(x=>x[0]));
@@ -1959,14 +1995,17 @@ function AddEmployee({onDone,refresh}:{onDone:()=>void;refresh:()=>void}) {
 
 function EmployeeEditor({
   employee,
+  userRole,
   onClose,
   onSave,
 }: {
   employee: Karyawan;
+  userRole: string;
   onClose: () => void;
   onSave: (p: Record<string, unknown>) => Promise<boolean> | boolean;
 }) {
   const { t } = useTranslation();
+  const isSuperAdmin = userRole.trim().toLowerCase() === 'super admin';
 
   const [f, setF] = useState({
     nik_ktp: employee.nik_ktp || '',
@@ -1987,11 +2026,19 @@ function EmployeeEditor({
     gaji_pokok: String(employee.gaji_pokok || 0),
     bank_name: employee.bank_name || '',
     bank_account: employee.bank_account || '',
-    status_aktif: employee.status_aktif !== false
+    role: employee.role || 'Karyawan',
+    bpjs_kesehatan: employee.bpjs_kesehatan || '',
+    bpjs_ketenagakerjaan: employee.bpjs_ketenagakerjaan || '',
+    status_aktif: employee.status_aktif !== false,
   });
 
+  const [roles, setRoles] = useState<string[]>([
+    'Karyawan', 'Supervisor', 'Payroll', 'HRD', 'Admin', 'Super Admin'
+  ]);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState('');
+  const [bpjsKesehatanFile, setBpjsKesehatanFile] = useState<File | null>(null);
+  const [bpjsKetenagakerjaanFile, setBpjsKetenagakerjaanFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
   const setField = (key: string, value: string | boolean) => {
@@ -2000,74 +2047,77 @@ function EmployeeEditor({
 
   useEffect(() => {
     let cancelled = false;
+    void supabase
+      .from('hris_roles')
+      .select('nama')
+      .eq('status', 'Aktif')
+      .order('nama')
+      .then(({ data }) => {
+        if (cancelled) return;
+        const next = Array.from(new Set([
+          ...roles,
+          ...((data || []).map((row: any) => String(row.nama || '').trim()).filter(Boolean))
+        ]));
+        setRoles(next);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
+  useEffect(() => {
+    let cancelled = false;
     const loadCurrentPhoto = async () => {
       const photo = employee.foto_url || '';
-
       if (!photo) {
         setPhotoPreview('');
         return;
       }
-
-      if (
-        /^https?:\/\//i.test(photo) ||
-        /^data:image\//i.test(photo) ||
-        /^blob:/i.test(photo) ||
-        /^\//.test(photo)
-      ) {
+      if (/^https?:\/\//i.test(photo) || /^data:image\//i.test(photo) || /^blob:/i.test(photo) || /^\//.test(photo)) {
         setPhotoPreview(photo);
         return;
       }
-
       try {
-        const { data, error } = await supabase.storage
-          .from('profile-photos')
-          .createSignedUrl(photo, 900);
-
-        if (!cancelled) {
-          setPhotoPreview(error || !data?.signedUrl ? '' : data.signedUrl);
-        }
+        const { data, error } = await supabase.storage.from('profile-photos').createSignedUrl(photo, 900);
+        if (!cancelled) setPhotoPreview(error || !data?.signedUrl ? '' : data.signedUrl);
       } catch {
         if (!cancelled) setPhotoPreview('');
       }
     };
-
     void loadCurrentPhoto();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [employee.id, employee.foto_url]);
 
-  useEffect(() => {
-    return () => {
-      if (photoPreview.startsWith('blob:')) {
-        URL.revokeObjectURL(photoPreview);
-      }
-    };
+  useEffect(() => () => {
+    if (photoPreview.startsWith('blob:')) URL.revokeObjectURL(photoPreview);
   }, [photoPreview]);
 
-  const handlePhotoChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
-
     if (!file.type.startsWith('image/')) {
       void appAlert('File foto harus berupa gambar.');
       e.target.value = '';
       return;
     }
-
     if (file.size > 2 * 1024 * 1024) {
       void appAlert('Ukuran foto maksimal 2 MB.');
       e.target.value = '';
       return;
     }
-
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
+  };
+
+  const validateBpjsFile = async (file: File | null, label: string) => {
+    if (!file) return true;
+    if (!file.type.startsWith('image/')) {
+      await appAlert(`${label} harus berupa file gambar.`);
+      return false;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      await appAlert(`${label} maksimal 4 MB.`);
+      return false;
+    }
+    return true;
   };
 
   const isStoragePath = (value: string) =>
@@ -2077,15 +2127,48 @@ function EmployeeEditor({
     !/^blob:/i.test(value) &&
     !/^\//.test(value);
 
+  const uploadBpjsCard = async (
+    file: File,
+    kind: 'kesehatan' | 'ketenagakerjaan'
+  ) => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const id = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const path = `cards/${f.id_karyawan.trim().toUpperCase()}/bpjs-${kind}-${id}.${ext}`;
+
+    const { data: signed, error: signedError } = await supabase.storage
+      .from('bpjs-cards')
+      .createSignedUploadUrl(path, { upsert: false });
+    if (signedError) throw signedError;
+
+    const { error: uploadError } = await supabase.storage
+      .from('bpjs-cards')
+      .uploadToSignedUrl(path, signed.token, file);
+    if (uploadError) throw uploadError;
+
+    return path;
+  };
+
   const save = async () => {
     if (!f.id_karyawan.trim()) {
       await appAlert(t('employee_id_required'));
       return;
     }
 
+    if (!isSuperAdmin && f.role !== (employee.role || 'Karyawan')) {
+      await appAlert('Perubahan Role hanya dapat dilakukan oleh Super Admin.');
+      return;
+    }
+
+    if (!(await validateBpjsFile(bpjsKesehatanFile, 'Kartu BPJS Kesehatan'))) return;
+    if (!(await validateBpjsFile(bpjsKetenagakerjaanFile, 'Kartu BPJS Ketenagakerjaan'))) return;
+
     setSaving(true);
 
     let uploadedPhotoPath = '';
+    let uploadedBpjsKesehatanPath = '';
+    let uploadedBpjsKetenagakerjaanPath = '';
 
     try {
       const payload: Record<string, unknown> = {
@@ -2094,322 +2177,134 @@ function EmployeeEditor({
         gaji_pokok: Number(f.gaji_pokok || 0),
       };
 
+      for (const key of ['tanggal_lahir', 'tanggal_masuk']) {
+        if (payload[key] === '') payload[key] = null;
+      }
+
       const oldPhotoPath = employee.foto_url || '';
+      const oldBpjsKesehatanPath = employee.bpjs_kesehatan_card_path || '';
+      const oldBpjsKetenagakerjaanPath = employee.bpjs_ketenagakerjaan_card_path || '';
 
       if (photoFile) {
-        const ext =
-          photoFile.name.split('.').pop()?.toLowerCase() || 'jpg';
-
-        const safeUuid =
-          typeof crypto !== 'undefined' &&
-          typeof crypto.randomUUID === 'function'
-            ? crypto.randomUUID()
-            : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
+        const ext = photoFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const safeUuid = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
         uploadedPhotoPath = `avatars/employee-${safeUuid}.${ext}`;
 
-        const { data: signedUpload, error: signedUploadError } =
-          await supabase.storage
-            .from('profile-photos')
-            .createSignedUploadUrl(uploadedPhotoPath, { upsert: false });
+        const { data: signedUpload, error: signedUploadError } = await supabase.storage
+          .from('profile-photos')
+          .createSignedUploadUrl(uploadedPhotoPath, { upsert: false });
+        if (signedUploadError) throw signedUploadError;
 
-        if (signedUploadError) {
-          throw signedUploadError;
-        }
-
-        const { error: uploadError } =
-          await supabase.storage
-            .from('profile-photos')
-            .uploadToSignedUrl(
-              uploadedPhotoPath,
-              signedUpload.token,
-              photoFile
-            );
-
-        if (uploadError) {
-          throw uploadError;
-        }
+        const { error: uploadError } = await supabase.storage
+          .from('profile-photos')
+          .uploadToSignedUrl(uploadedPhotoPath, signedUpload.token, photoFile);
+        if (uploadError) throw uploadError;
 
         payload.foto_url = uploadedPhotoPath;
       }
 
+      if (bpjsKesehatanFile) {
+        uploadedBpjsKesehatanPath = await uploadBpjsCard(bpjsKesehatanFile, 'kesehatan');
+        payload.bpjs_kesehatan_card_path = uploadedBpjsKesehatanPath;
+      }
+
+      if (bpjsKetenagakerjaanFile) {
+        uploadedBpjsKetenagakerjaanPath = await uploadBpjsCard(bpjsKetenagakerjaanFile, 'ketenagakerjaan');
+        payload.bpjs_ketenagakerjaan_card_path = uploadedBpjsKetenagakerjaanPath;
+      }
+
       const saved = await onSave(payload);
-
       if (!saved) {
-        if (uploadedPhotoPath) {
-          await supabase.storage
-            .from('profile-photos')
-            .remove([uploadedPhotoPath])
-            .catch(() => undefined);
-        }
-
+        if (uploadedPhotoPath) await supabase.storage.from('profile-photos').remove([uploadedPhotoPath]).catch(() => undefined);
+        if (uploadedBpjsKesehatanPath) await supabase.storage.from('bpjs-cards').remove([uploadedBpjsKesehatanPath]).catch(() => undefined);
+        if (uploadedBpjsKetenagakerjaanPath) await supabase.storage.from('bpjs-cards').remove([uploadedBpjsKetenagakerjaanPath]).catch(() => undefined);
         return;
       }
 
-      // Hapus foto lama hanya setelah DB berhasil menunjuk ke foto baru.
-      if (
-        uploadedPhotoPath &&
-        oldPhotoPath &&
-        oldPhotoPath !== uploadedPhotoPath &&
-        isStoragePath(oldPhotoPath)
-      ) {
-        await supabase.storage
-          .from('profile-photos')
-          .remove([oldPhotoPath])
-          .catch(error => {
-            console.warn('Foto lama tidak berhasil dihapus:', error);
-          });
-      }
-    } catch (error: any) {
-      if (uploadedPhotoPath) {
-        await supabase.storage
-          .from('profile-photos')
-          .remove([uploadedPhotoPath])
-          .catch(() => undefined);
+      if (uploadedPhotoPath && oldPhotoPath && oldPhotoPath !== uploadedPhotoPath && isStoragePath(oldPhotoPath)) {
+        await supabase.storage.from('profile-photos').remove([oldPhotoPath]).catch(error => {
+          console.warn('Foto lama tidak berhasil dihapus:', error);
+        });
       }
 
-      await appAlert(
-        `Gagal mengganti foto karyawan:
-${error?.message || 'Terjadi kesalahan.'}`
-      );
+      for (const [oldPath, newPath] of [
+        [oldBpjsKesehatanPath, uploadedBpjsKesehatanPath],
+        [oldBpjsKetenagakerjaanPath, uploadedBpjsKetenagakerjaanPath],
+      ]) {
+        if (oldPath && newPath && oldPath !== newPath && isStoragePath(oldPath)) {
+          await supabase.storage.from('bpjs-cards').remove([oldPath]).catch(error => {
+            console.warn('Kartu BPJS lama tidak berhasil dihapus:', error);
+          });
+        }
+      }
+    } catch (error: any) {
+      if (uploadedPhotoPath) await supabase.storage.from('profile-photos').remove([uploadedPhotoPath]).catch(() => undefined);
+      if (uploadedBpjsKesehatanPath) await supabase.storage.from('bpjs-cards').remove([uploadedBpjsKesehatanPath]).catch(() => undefined);
+      if (uploadedBpjsKetenagakerjaanPath) await supabase.storage.from('bpjs-cards').remove([uploadedBpjsKetenagakerjaanPath]).catch(() => undefined);
+
+      await appAlert(`Gagal menyimpan data karyawan:\n${error?.message || 'Terjadi kesalahan.'}`);
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div
-      className="drawer-backdrop"
-      onMouseDown={e => {
-        if (e.currentTarget === e.target && !saving) {
-          onClose();
-        }
-      }}
-    >
+    <div className="drawer-backdrop" onMouseDown={e => {
+      if (e.currentTarget === e.target && !saving) onClose();
+    }}>
       <aside className="edit-drawer">
         <div className="drawer-head">
           <div>
             <span>{t('employee_profile')}</span>
             <h2>{t('edit_employee')}</h2>
           </div>
-
-          <button
-            className="icon-btn"
-            onClick={onClose}
-            type="button"
-            disabled={saving}
-          >
-            ×
-          </button>
+          <button className="icon-btn" onClick={onClose} type="button" disabled={saving}>×</button>
         </div>
 
         <div className="drawer-body">
-
-          {/* FOTO KARYAWAN */}
-          <div
-            style={{
-              marginBottom: 20,
-              padding: 14,
-              border: '1px solid #d0d5dd',
-              borderRadius: 14,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 16,
-              }}
-            >
-              <div
-                style={{
-                  width: 110,
-                  height: 135,
-                  flexShrink: 0,
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  background: '#eef2f7',
-                  border: '2px solid #d6ae58',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
+          <div style={{marginBottom:20,padding:14,border:'1px solid #d0d5dd',borderRadius:14}}>
+            <div style={{display:'flex',alignItems:'center',gap:16}}>
+              <div style={{width:110,height:135,flexShrink:0,borderRadius:12,overflow:'hidden',background:'#eef2f7',border:'2px solid #d6ae58',display:'flex',alignItems:'center',justifyContent:'center'}}>
                 {photoPreview ? (
-                  <img
-                    src={photoPreview}
-                    alt={`Foto ${employee.nama}`}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
+                  <img src={photoPreview} alt={`Foto ${employee.nama}`} style={{width:'100%',height:'100%',objectFit:'cover'}} />
                 ) : (
-                  <span
-                    style={{
-                      fontSize: 38,
-                      fontWeight: 700,
-                      color: '#667085',
-                    }}
-                  >
-                    {employee.nama?.[0] || 'K'}
-                  </span>
+                  <span style={{fontSize:38,fontWeight:700,color:'#667085'}}>{employee.nama?.[0] || 'K'}</span>
                 )}
               </div>
-
               <div>
-                <strong
-                  style={{
-                    display: 'block',
-                    marginBottom: 6,
-                  }}
-                >
-                  Foto Karyawan
-                </strong>
-
-                <small
-                  style={{
-                    display: 'block',
-                    color: '#667085',
-                    marginBottom: 10,
-                  }}
-                >
-                  JPG, PNG, atau WebP · maksimal 2 MB
-                </small>
-
-                <input
-                  id={`employee-photo-${employee.id}`}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handlePhotoChange}
-                  disabled={saving}
-                  style={{ display: 'none' }}
-                />
-
-                <label
-                  htmlFor={`employee-photo-${employee.id}`}
-                  className="secondary"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '9px 13px',
-                    cursor: saving ? 'not-allowed' : 'pointer',
-                  }}
-                >
+                <strong style={{display:'block',marginBottom:6}}>Foto Karyawan</strong>
+                <small style={{display:'block',color:'#667085',marginBottom:10}}>JPG, PNG, atau WebP · maksimal 2 MB</small>
+                <input id={`employee-photo-${employee.id}`} type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoChange} disabled={saving} style={{display:'none'}} />
+                <label htmlFor={`employee-photo-${employee.id}`} className="secondary" style={{display:'inline-flex',alignItems:'center',justifyContent:'center',padding:'9px 13px',cursor:saving?'not-allowed':'pointer'}}>
                   {photoFile ? 'Ganti Foto Lagi' : 'Ganti Foto'}
                 </label>
-
-                {photoFile && (
-                  <div
-                    style={{
-                      marginTop: 8,
-                      fontSize: 12,
-                      color: '#475467',
-                    }}
-                  >
-                    Foto baru siap diupload: {photoFile.name}
-                  </div>
-                )}
+                {photoFile && <div style={{marginTop:8,fontSize:12,color:'#475467'}}>Foto baru: {photoFile.name}</div>}
               </div>
             </div>
           </div>
 
-          <label>
-            NIK KTP
-            <input
-              value={f.nik_ktp}
-              onChange={e => setField('nik_ktp', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+          <label>NIK KTP<input value={f.nik_ktp} onChange={e=>setField('nik_ktp',e.target.value)} disabled={saving}/></label>
+          <label>ID Karyawan<input value={f.id_karyawan} onChange={e=>setField('id_karyawan',e.target.value)} disabled={saving}/></label>
+          <label>Nama<input value={f.nama} onChange={e=>setField('nama',e.target.value)} disabled={saving}/></label>
+          <label>Tempat Lahir<input value={f.tempat_lahir} onChange={e=>setField('tempat_lahir',e.target.value)} disabled={saving}/></label>
+          <label>Tanggal Lahir<input type="date" value={f.tanggal_lahir} onChange={e=>setField('tanggal_lahir',e.target.value)} disabled={saving}/></label>
 
-          <label>
-            ID Karyawan
-            <input
-              value={f.id_karyawan}
-              onChange={e => setField('id_karyawan', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Nama
-            <input
-              value={f.nama}
-              onChange={e => setField('nama', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Tempat Lahir
-            <input
-              value={f.tempat_lahir}
-              onChange={e => setField('tempat_lahir', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Tanggal Lahir
-            <input
-              type="date"
-              value={f.tanggal_lahir}
-              onChange={e => setField('tanggal_lahir', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Jenis Kelamin
-            <select
-              value={f.jenis_kelamin}
-              onChange={e => setField('jenis_kelamin', e.target.value)}
-              disabled={saving}
-            >
+          <label>Jenis Kelamin
+            <select value={f.jenis_kelamin} onChange={e=>setField('jenis_kelamin',e.target.value)} disabled={saving}>
               <option value="">Pilih Jenis Kelamin</option>
               <option value="Laki-laki">Laki-laki</option>
               <option value="Perempuan">Perempuan</option>
             </select>
           </label>
 
-          <label>
-            Alamat
-            <input
-              value={f.alamat_rumah}
-              onChange={e => setField('alamat_rumah', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+          <label>Alamat<input value={f.alamat_rumah} onChange={e=>setField('alamat_rumah',e.target.value)} disabled={saving}/></label>
+          <label>No. Telepon<input value={f.no_telp} onChange={e=>setField('no_telp',e.target.value)} disabled={saving}/></label>
+          <label>Email<input type="email" value={f.email} onChange={e=>setField('email',e.target.value)} disabled={saving}/></label>
 
-          <label>
-            No. Telepon
-            <input
-              value={f.no_telp}
-              onChange={e => setField('no_telp', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Email
-            <input
-              type="email"
-              value={f.email}
-              onChange={e => setField('email', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Status Pernikahan
-            <select
-              value={f.status_pernikahan}
-              onChange={e => setField('status_pernikahan', e.target.value)}
-              disabled={saving}
-            >
+          <label>Status Pernikahan
+            <select value={f.status_pernikahan} onChange={e=>setField('status_pernikahan',e.target.value)} disabled={saving}>
               <option value="">Pilih Status Pernikahan</option>
               <option value="Belum Menikah">Belum Menikah</option>
               <option value="Menikah">Menikah</option>
@@ -2417,40 +2312,12 @@ ${error?.message || 'Terjadi kesalahan.'}`
             </select>
           </label>
 
-          <label>
-            Nama Ibu Kandung
-            <input
-              value={f.nama_ibu_kandung}
-              onChange={e => setField('nama_ibu_kandung', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+          <label>Nama Ibu Kandung<input value={f.nama_ibu_kandung} onChange={e=>setField('nama_ibu_kandung',e.target.value)} disabled={saving}/></label>
+          <label>Departemen<input value={f.departemen} onChange={e=>setField('departemen',e.target.value)} disabled={saving}/></label>
+          <label>Jabatan<input value={f.jabatan} onChange={e=>setField('jabatan',e.target.value)} disabled={saving}/></label>
 
-          <label>
-            Departemen
-            <input
-              value={f.departemen}
-              onChange={e => setField('departemen', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Jabatan
-            <input
-              value={f.jabatan}
-              onChange={e => setField('jabatan', e.target.value)}
-              disabled={saving}
-            />
-          </label>
-
-          <label>
-            Status Karyawan
-            <select
-              value={f.status_karyawan}
-              onChange={e => setField('status_karyawan', e.target.value)}
-              disabled={saving}
-            >
+          <label>Status Karyawan
+            <select value={f.status_karyawan} onChange={e=>setField('status_karyawan',e.target.value)} disabled={saving}>
               <option value="Tetap">Tetap</option>
               <option value="Kontrak">Kontrak</option>
               <option value="Harian">Harian</option>
@@ -2458,71 +2325,55 @@ ${error?.message || 'Terjadi kesalahan.'}`
             </select>
           </label>
 
-          <label>
-            Tanggal Masuk
-            <input
-              type="date"
-              value={f.tanggal_masuk}
-              onChange={e => setField('tanggal_masuk', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+          <label>Tanggal Masuk<input type="date" value={f.tanggal_masuk} onChange={e=>setField('tanggal_masuk',e.target.value)} disabled={saving}/></label>
+          <label>Gaji Pokok<input type="number" value={f.gaji_pokok} onChange={e=>setField('gaji_pokok',e.target.value)} disabled={saving}/></label>
+          <label>Nama Bank<input value={f.bank_name} onChange={e=>setField('bank_name',e.target.value)} disabled={saving}/></label>
+          <label>Nomor Rekening<input value={f.bank_account} onChange={e=>setField('bank_account',e.target.value)} disabled={saving}/></label>
 
           <label>
-            Gaji Pokok
-            <input
-              type="number"
-              value={f.gaji_pokok}
-              onChange={e => setField('gaji_pokok', e.target.value)}
-              disabled={saving}
-            />
+            Role
+            <select value={f.role} onChange={e=>setField('role',e.target.value)} disabled={saving || !isSuperAdmin}>
+              {!roles.includes(f.role) && <option value={f.role}>{f.role}</option>}
+              {roles.map(role => <option key={role} value={role}>{role}</option>)}
+            </select>
+            {!isSuperAdmin && <small style={{display:'block',marginTop:4,color:'#667085'}}>Hanya Super Admin yang dapat mengubah Role.</small>}
           </label>
 
-          <label>
-            Nama Bank
-            <input
-              value={f.bank_name}
-              onChange={e => setField('bank_name', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+          <div style={{marginTop:6,padding:14,border:'1px solid #d0d5dd',borderRadius:14}}>
+            <strong style={{display:'block',marginBottom:12}}>BPJS Karyawan</strong>
 
-          <label>
-            Nomor Rekening
-            <input
-              value={f.bank_account}
-              onChange={e => setField('bank_account', e.target.value)}
-              disabled={saving}
-            />
-          </label>
+            <label>
+              BPJS Kesehatan
+              <input value={f.bpjs_kesehatan} onChange={e=>setField('bpjs_kesehatan',e.target.value)} disabled={saving} placeholder="Nomor BPJS Kesehatan" />
+            </label>
+
+            <label style={{marginTop:12}}>
+              Kartu BPJS Kesehatan
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>setBpjsKesehatanFile(e.target.files?.[0] || null)} disabled={saving}/>
+              <small style={{display:'block',marginTop:5,color:'#667085'}}>JPG, PNG, WebP · maksimal 4 MB{bpjsKesehatanFile ? ` · ${bpjsKesehatanFile.name}` : ''}</small>
+            </label>
+
+            <label style={{marginTop:12}}>
+              BPJS Ketenagakerjaan
+              <input value={f.bpjs_ketenagakerjaan} onChange={e=>setField('bpjs_ketenagakerjaan',e.target.value)} disabled={saving} placeholder="Nomor BPJS Ketenagakerjaan" />
+            </label>
+
+            <label style={{marginTop:12}}>
+              Kartu BPJS Ketenagakerjaan
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>setBpjsKetenagakerjaanFile(e.target.files?.[0] || null)} disabled={saving}/>
+              <small style={{display:'block',marginTop:5,color:'#667085'}}>JPG, PNG, WebP · maksimal 4 MB{bpjsKetenagakerjaanFile ? ` · ${bpjsKetenagakerjaanFile.name}` : ''}</small>
+            </label>
+          </div>
 
           <label className="switch-row">
             <span>{t('active_status')}</span>
-            <input
-              type="checkbox"
-              checked={f.status_aktif}
-              onChange={e => setField('status_aktif', e.target.checked)}
-              disabled={saving}
-            />
+            <input type="checkbox" checked={f.status_aktif} onChange={e=>setField('status_aktif',e.target.checked)} disabled={saving}/>
           </label>
         </div>
 
         <div className="drawer-foot">
-          <button
-            type="button"
-            className="secondary"
-            onClick={onClose}
-            disabled={saving}
-          >
-            Batal
-          </button>
-
-          <button
-            type="button"
-            className="primary"
-            onClick={() => void save()}
-            disabled={saving}
-          >
+          <button type="button" className="secondary" onClick={onClose} disabled={saving}>Batal</button>
+          <button type="button" className="primary" onClick={()=>void save()} disabled={saving}>
             {saving ? 'Mengupload & Menyimpan...' : 'Simpan Perubahan'}
           </button>
         </div>
@@ -2575,37 +2426,43 @@ function Reports({employees,attendance,onExport}:{employees:Karyawan[];attendanc
 function ReportCard({name,count,onClick}:{name:string;count:number;onClick:()=>void}){const {t}=useTranslation();return <div className="report-card"><span>{t('reports')||'LAPORAN'}</span><h3>{name}</h3><b>{count}</b><p>{t('data_available')||'data tersedia'}</p><button className="primary" onClick={onClick}>{t('export_csv')||'Export CSV'}</button></div>}
 function ThemeControl({ userRole }: { userRole: string }) {
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState<CosmicThemeId>(() => getCosmicTheme());
+  const [theme, setTheme] = useState<import('../../../lib/userPreferences').PublicAppTheme>('professional');
 
   useEffect(() => {
     let active = true;
     const load = async () => {
-      const { data: session } = await supabase.auth.getSession();
-      const userId = session.session?.user?.id;
-      if (!userId) return;
-      const next = await loadUserThemePreference(userId);
+      const next = await getPublicAppTheme();
       if (!active) return;
       setTheme(next);
-      applyCosmicTheme(next, false);
+      applyProjectTheme(next, false);
     };
     void load();
+    const onTheme = (event: Event) => {
+      const next = (event as CustomEvent<string>).detail;
+      if (next === 'professional' || next in COSMIC_THEMES) setTheme(next as import('../../../lib/userPreferences').PublicAppTheme);
+    };
+    window.addEventListener('project-tirta-public-theme-change', onTheme);
+    window.addEventListener('project-tirta-theme-change', onTheme);
     return () => {
       active = false;
+      window.removeEventListener('project-tirta-public-theme-change', onTheme);
+      window.removeEventListener('project-tirta-theme-change', onTheme);
     };
   }, []);
 
-  const chooseTheme = async (next: CosmicThemeId) => {
+  const chooseTheme = async (next: import('../../../lib/userPreferences').PublicAppTheme) => {
     setTheme(next);
-    applyCosmicTheme(next, true);
+    applyProjectTheme(next, true);
 
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session?.user?.id;
+
     if (userId) {
       await saveUserThemePreference(userId, next);
+
       if (userRole.trim().toLowerCase() === 'super admin') {
         const employeeSync = await setEmployeePortalTheme(next);
         const publicSync = await setPublicAppTheme(next);
-
         if (!employeeSync || !publicSync) {
           console.warn('ThemeControl sync incomplete:', {
             employeeSync,
@@ -2615,19 +2472,33 @@ function ThemeControl({ userRole }: { userRole: string }) {
         }
       }
     }
+
     setOpen(false);
   };
+
+  const options = [
+    { id:'professional' as const, name:'Professional' },
+    ...(['sun','moon','galaxy','blackhole','nebula','aurora'] as CosmicThemeId[])
+      .map(id => ({ id, name:COSMIC_THEMES[id].name })),
+  ];
 
   return (
     <div className="theme-control">
       <button type="button" className="icon-btn theme-control-button" aria-label="Pilih tema" aria-expanded={open} title="Tema" onClick={() => setOpen(value => !value)}>◫</button>
       {open && (
         <div className="theme-control-menu" role="menu" aria-label="Pilih tema">
-          {(['sun','moon','galaxy','blackhole','nebula','aurora'] as CosmicThemeId[]).map(id => (
-            <button key={id} type="button" className={`theme-control-option ${theme === id ? 'active' : ''}`} role="menuitemradio" aria-checked={theme === id} onClick={() => void chooseTheme(id)}>
-              <span className={`theme-control-dot cosmic-theme-${id}`} aria-hidden="true" />
-              <span>{COSMIC_THEMES[id].name}</span>
-              {theme === id && <b>✓</b>}
+          {options.map(item => (
+            <button
+              key={item.id}
+              type="button"
+              className={`theme-control-option ${theme === item.id ? 'active' : ''}`}
+              role="menuitemradio"
+              aria-checked={theme === item.id}
+              onClick={() => void chooseTheme(item.id)}
+            >
+              <span className={`theme-control-dot ${item.id === 'professional' ? 'theme-professional' : `cosmic-theme-${item.id}`}`} aria-hidden="true" />
+              <span>{item.name}</span>
+              {theme === item.id && <b>✓</b>}
             </button>
           ))}
         </div>
@@ -2683,9 +2554,9 @@ function Settings({
   };
 
   const DEFAULT_THEME: ThemeDefinition = {
-    id:'sun', name:'Tema Matahari', description:'Energi hangat dan aksen emas futuristik.',
-    primary:'#0a111f', accent:'#f6c767', background:'#0a111f', surface:'#101a2c', text:'#f8fafc', border:'#f6c767',
-    sidebar:'#050c18', sidebarText:'#f8fafc', sidebarMuted:'#aeb8c8', sidebarActive:'#f6c767', sidebarActiveText:'#07111f'
+    id:'professional', name:'Professional', description:'Energi hangat dan aksen emas futuristik.',
+    primary:'#101a33', accent:'#c9a227', background:'#f6f7fb', surface:'#ffffff', text:'#172033', border:'#dfe5ee',
+    sidebar:'#0b1736', sidebarText:'#ffffff', sidebarMuted:'#aeb7c5', sidebarActive:'#d6ae58', sidebarActiveText:'#0b1222'
   };
 
   const [customTheme,setCustomTheme]=useState({
@@ -2695,6 +2566,7 @@ function Settings({
   const [activeThemeId,setActiveThemeId]=useState<string>(()=>getCosmicTheme());
 
   const themes:ThemeDefinition[]=[
+    {id:'professional',name:'Professional',description:'Tampilan HR profesional tanpa latar cosmic.',primary:'#101a33',accent:'#c9a227',background:'#f6f7fb',surface:'#ffffff',text:'#172033',border:'#dfe5ee',sidebar:'#0b1736',sidebarText:'#ffffff',sidebarMuted:'#aeb7c5',sidebarActive:'#d6ae58',sidebarActiveText:'#0b1222'},
     {id:'sun',name:'Matahari',description:'Solar flare, gold energy, dan warm cosmic glow.',primary:'#0a111f',accent:'#f6c767',background:'#0a111f',surface:'#101a2c',text:'#f8fafc',border:'#f6c767',sidebar:'#050c18',sidebarText:'#ffffff',sidebarMuted:'#b7c2d2',sidebarActive:'#f6c767',sidebarActiveText:'#07111f'},
     {id:'moon',name:'Bulan',description:'Moonlight silver, midnight blue, dan calm glow.',primary:'#071222',accent:'#e4d1a0',background:'#071222',surface:'#101d31',text:'#f8fafc',border:'#e4d1a0',sidebar:'#040b17',sidebarText:'#ffffff',sidebarMuted:'#aab8cc',sidebarActive:'#e4d1a0',sidebarActiveText:'#07111f'},
     {id:'galaxy',name:'Galaksi',description:'Deep violet, nebula haze, dan electric blue.',primary:'#0d0820',accent:'#d7adff',background:'#0d0820',surface:'#17102e',text:'#f8fafc',border:'#d7adff',sidebar:'#070314',sidebarText:'#ffffff',sidebarMuted:'#c8bae0',sidebarActive:'#d7adff',sidebarActiveText:'#160b27'},
@@ -2761,45 +2633,58 @@ function Settings({
 
   useEffect(() => {
     const handleTheme = (event: Event) => {
-      const id = (event as CustomEvent<CosmicThemeId>).detail;
-      if (id && id in COSMIC_THEMES) setActiveThemeId(id);
+      const id = (event as CustomEvent<string>).detail;
+      if (id === 'professional' || id in COSMIC_THEMES) setActiveThemeId(id);
     };
     window.addEventListener('project-tirta-theme-change', handleTheme);
-    setActiveThemeId(getCosmicTheme());
-    return () => window.removeEventListener('project-tirta-theme-change', handleTheme);
+    window.addEventListener('project-tirta-public-theme-change', handleTheme);
+    void getPublicAppTheme().then(next => {
+      setActiveThemeId(next);
+      applyProjectTheme(next, false);
+    });
+    return () => {
+      window.removeEventListener('project-tirta-theme-change', handleTheme);
+      window.removeEventListener('project-tirta-public-theme-change', handleTheme);
+    };
   }, []);
 
   const applyTheme=async(input:Partial<ThemeDefinition>,persist=true)=>{
     const theme=normalizeTheme(input);
+    const isProfessional = theme.id === 'professional';
+    const isCosmic = theme.id in COSMIC_THEMES;
     const root=document.documentElement;
-    if (theme.id in COSMIC_THEMES) {
-      applyCosmicTheme(theme.id as CosmicThemeId, true);
+
+    if (isProfessional) {
+      applyProjectTheme('professional', true);
+      setActiveThemeId('professional');
+    } else if (isCosmic) {
+      applyProjectTheme(theme.id as CosmicThemeId, true);
       setActiveThemeId(theme.id);
     }
+
     const pageText = getReadableText(theme.background, '#172033');
     const vars:Record<string,string>={
-      // The selected theme controls only the main page background.
       '--mx-primary':'#0b1222',
       '--mx-primary-contrast':'#f8fafc',
-      '--mx-accent':'#d6ae58',
+      '--mx-accent':theme.accent,
       '--mx-background':theme.background,
-      '--mx-surface':'#101827',
-      '--mx-surface-alt':'#172033',
-      '--mx-text':'#e2e5ea',
-      '--mx-text-secondary':'#c7ccd5',
-      '--mx-text-muted':'#9ba6b6',
+      '--mx-surface':isProfessional ? '#ffffff' : '#101827',
+      '--mx-surface-alt':isProfessional ? '#eef2f7' : '#172033',
+      '--mx-text':isProfessional ? '#172033' : '#e2e5ea',
+      '--mx-text-secondary':isProfessional ? '#475467' : '#c7ccd5',
+      '--mx-text-muted':isProfessional ? '#667085' : '#9ba6b6',
       '--mx-page-text':pageText,
-      '--mx-control-bg':'#111b33',
-      '--mx-control-text':'#eef1f5',
-      '--mx-control-border':'#d6ae58',
-      '--mx-sidebar':'#070f20',
+      '--mx-control-bg':isProfessional ? '#ffffff' : '#111b33',
+      '--mx-control-text':isProfessional ? '#172033' : '#eef1f5',
+      '--mx-control-border':isProfessional ? '#dfe5ee' : theme.border,
+      '--mx-sidebar':isProfessional ? '#0b1736' : '#070f20',
       '--mx-sidebar-text':'#eef1f5',
       '--mx-sidebar-muted':'#aeb7c5',
       '--mx-sidebar-active':'#d6ae58',
       '--mx-sidebar-active-text':'#0b1222',
-      '--mx-border':'#d6ae58',
-      '--mx-border-strong':'#d6ae58',
-      '--mx-focus':'#d6ae58',
+      '--mx-border':theme.border,
+      '--mx-border-strong':theme.border,
+      '--mx-focus':theme.accent,
       '--mx-blue':'#0b1222',
       '--mx-blue-soft':'rgba(214,174,88,.10)',
       '--mx-success':'#44c58a',
@@ -2809,21 +2694,23 @@ function Settings({
       '--blue':'#0b1222',
       '--blue2':'#172033',
       '--blue-soft':'rgba(214,174,88,.10)',
-      '--ink':'#e2e5ea',
-      '--line':'#d6ae58',
-      '--surface':'#101827',
+      '--ink':isProfessional ? '#172033' : '#e2e5ea',
+      '--line':theme.border,
+      '--surface':isProfessional ? '#ffffff' : '#101827',
       '--bg':theme.background,
       '--app-primary':'#0b1222',
       '--app-primary-contrast':'#f8fafc',
-      '--app-accent':'#d6ae58',
+      '--app-accent':theme.accent,
       '--app-bg':theme.background,
-      '--app-surface':'#101827',
-      '--app-surface-alt':'#172033',
-      '--app-text':'#e2e5ea',
-      '--app-muted':'#9ba6b6',
-      '--app-border':'#d6ae58'
+      '--app-surface':isProfessional ? '#ffffff' : '#101827',
+      '--app-surface-alt':isProfessional ? '#eef2f7' : '#172033',
+      '--app-text':isProfessional ? '#172033' : '#e2e5ea',
+      '--app-muted':isProfessional ? '#667085' : '#9ba6b6',
+      '--app-border':theme.border
     };
+
     Object.entries(vars).forEach(([key,value])=>root.style.setProperty(key,value));
+
     setCustomTheme({
       primary:theme.primary,
       accent:theme.accent,
@@ -2838,33 +2725,26 @@ function Settings({
       sidebarActiveText:theme.sidebarActiveText
     });
     setActiveThemeId(theme.id);
+
     if(persist){
       const { data: session } = await supabase.auth.getSession();
       const userId = session.session?.user?.id;
-      if (userId) {
-        if (theme.id in COSMIC_THEMES) {
-          await saveUserThemePreference(userId, theme.id as CosmicThemeId);
+      if (userId && (isProfessional || isCosmic)) {
+        await saveUserThemePreference(userId, theme.id as import('../../../lib/userPreferences').PublicAppTheme);
 
-          if (canManageThemes) {
-            const employeeSync = await setEmployeePortalTheme(theme.id as CosmicThemeId);
-            const publicSync = await setPublicAppTheme(theme.id as CosmicThemeId);
-
-            if (!employeeSync || !publicSync) {
-              console.warn('Theme sync incomplete:', {
-                employeeSync,
-                publicSync,
-                theme: theme.id,
-              });
-            }
+        if (canManageThemes) {
+          const employeeSync = await setEmployeePortalTheme(theme.id as import('../../../lib/userPreferences').PublicAppTheme);
+          const publicSync = await setPublicAppTheme(theme.id as import('../../../lib/userPreferences').PublicAppTheme);
+          if (!employeeSync || !publicSync) {
+            console.warn('Theme sync incomplete:', { employeeSync, publicSync, theme: theme.id });
           }
-        } else {
-          saveCustomThemeCache(userId, theme);
         }
+      } else if (userId) {
+        saveCustomThemeCache(userId, theme);
       }
       setMsg(`Tema "${theme.name || 'Tema Kustom'}" berhasil diterapkan.`);
     }
   };
-
   const updateCustomColor=(key:keyof typeof customTheme,value:string)=>{
     if(!isHexColor(value)) return;
     setCustomTheme(prev=>({...prev,[key]:value}));
@@ -2875,12 +2755,9 @@ function Settings({
   useEffect(()=>{
     supabase.from('hris_company_settings').select('*').eq('id',1).maybeSingle().then(({data})=>{if(data)setF(data);});
     const loadTheme = async () => {
-      const { data: session } = await supabase.auth.getSession();
-      const userId = session.session?.user?.id;
-      if (!userId) return;
-      const cosmic = await loadUserThemePreference(userId);
-      applyCosmicTheme(cosmic, true);
-      setActiveThemeId(cosmic);
+      const next = await getPublicAppTheme();
+      applyProjectTheme(next, false);
+      setActiveThemeId(next);
     };
     void loadTheme();
   },[canManageThemes]);

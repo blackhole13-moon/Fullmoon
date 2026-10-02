@@ -6,7 +6,7 @@ import galaxyArt from '../../../assets/cosmic/cosmic-galaxy.webp';
 import blackholeArt from '../../../assets/cosmic/cosmic-blackhole.webp';
 import nebulaArt from '../../../assets/cosmic/cosmic-nebula.webp';
 
-type CosmicTheme = 'sun'|'moon'|'galaxy'|'blackhole'|'nebula'|'aurora';
+type CosmicTheme = 'sun'|'moon'|'galaxy'|'blackhole'|'nebula'|'aurora'|'professional';
 
 const ART: Partial<Record<CosmicTheme,string>> = {
   sun:sunArt, moon:moonArt, galaxy:galaxyArt,
@@ -15,7 +15,9 @@ const ART: Partial<Record<CosmicTheme,string>> = {
 
 function readTheme(): CosmicTheme {
   const v = document.documentElement.dataset.cosmicTheme;
-  return v && (v in ART || v === 'aurora') ? v as CosmicTheme : 'sun';
+  return v && (v in ART || v === 'aurora')
+    ? v as CosmicTheme
+    : 'professional';
 }
 
 export default function AndroidCosmicBackground() {
@@ -96,6 +98,7 @@ export default function AndroidCosmicBackground() {
 
       /* Stars stay static. The atmosphere is the only moving layer. */
       const atmosphereSpeed: Record<CosmicTheme, number> = {
+        professional: 0,
         sun: 0.75,
         moon: 0.35,
         galaxy: 0.55,
@@ -105,11 +108,22 @@ export default function AndroidCosmicBackground() {
       };
 
       if (atmosphere.current) {
-        const speed = atmosphereSpeed[theme] ?? 0.55;
-        const breathe = 1.02 + Math.sin(t * 0.16) * 0.012;
-        const drift = Math.sin(t * 0.11) * 1.5;
-        atmosphere.current.style.transform =
-          `translate3d(${drift}px,0,0) rotate(${t*speed}deg) scale(${breathe})`;
+        if (theme === 'aurora' || theme === 'professional') {
+          atmosphere.current.style.display = 'none';
+          atmosphere.current.style.transform = 'none';
+        } else {
+          atmosphere.current.style.display = 'block';
+          const speed = atmosphereSpeed[theme] ?? 0.55;
+          const breathe = 1.02 + Math.sin(t * 0.16) * 0.012;
+          const drift = Math.sin(t * 0.11) * 1.5;
+          atmosphere.current.style.transform =
+            `translate3d(${drift}px,0,0) rotate(${t*speed}deg) scale(${breathe})`;
+        }
+      }
+
+      if (stars.current) {
+        stars.current.style.display =
+          theme === 'aurora' || theme === 'professional' ? 'none' : 'block';
       }
 
       raf=requestAnimationFrame(tick);
@@ -122,12 +136,14 @@ export default function AndroidCosmicBackground() {
   const root:CSSProperties = {
     position:'fixed', inset:0, width:'100vw', height:'100dvh',
     zIndex:0, pointerEvents:'none', overflow:'hidden',
-    background:'#02050a'
+    background:'transparent'
   };
 
   const atmosphereBackground =
-    theme==='aurora'
-      ? 'linear-gradient(125deg,rgba(124,255,178,.18),transparent 32%,rgba(111,211,255,.18) 55%,transparent 76%), radial-gradient(circle at 74% 18%,rgba(167,110,255,.14),transparent 28%)'
+    theme==='professional'
+      ? 'transparent'
+      : theme==='aurora'
+      ? 'transparent'
       : theme==='blackhole'
       ? 'conic-gradient(from 10deg at 50% 48%,transparent 0 18deg,rgba(70,210,255,.28) 24deg,rgba(255,175,75,.34) 32deg,transparent 42deg 150deg,rgba(255,145,55,.22) 166deg,rgba(55,210,255,.20) 184deg,transparent 198deg 360deg)'
       : theme==='galaxy'
@@ -137,6 +153,7 @@ export default function AndroidCosmicBackground() {
       : 'radial-gradient(circle at 50% 45%,rgba(80,190,255,.10),transparent 42%)';
 
   if (typeof document === 'undefined') return null;
+  if (theme === 'professional') return null;
 
   return createPortal(
     <div style={root} aria-hidden="true">
