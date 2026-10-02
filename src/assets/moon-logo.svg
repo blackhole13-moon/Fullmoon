@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gold"
+      x1="80" y1="80"
+      x2="430" y2="430"
+      gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D4AF37"/>
+      <stop offset="0.52" stop-color="#F7DF86"/>
+      <stop offset="1" stop-color="#C79A20"/>
+    </linearGradient>
+  </defs>
+
+  <!-- outer gold ring -->
+  <circle
+    cx="256"
+    cy="256"
+    r="242"
+    fill="#D4AF37"
+  />
+
+  <!-- inner navy field -->
+  <circle
+    cx="256"
+    cy="256"
+    r="228"
+    fill="#081126"
+  />
+
+  <!-- moon crescent -->
+  <path
+    fill="url(#gold)"
+    d="
+      M292 48
+      C207 74 145 155 145 251
+      C145 355 216 441 316 465
+      C296 470 276 473 255 473
+      C130 473 29 375 29 255
+      C29 131 130 32 255 32
+      C268 32 281 38 292 48
+      Z
+    "
+  />
+
+  <!-- precision navy cut -->
+  <path
+    fill="#081126"
+    d="
+      M319 59
+      C251 91 204 159 204 247
+      C204 333 252 408 321 452
+      C286 443 255 424 231 398
+      C190 354 167 301 167 244
+      C167 157 223 83 319 59
+      Z
+    "
+  />
+</svg>

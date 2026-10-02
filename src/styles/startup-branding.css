@@ -1,0 +1,31 @@
+
+/* Hilangkan tampilan card loading lama */
+.app-loading-card {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+}
+
+/* Loading tetap menggunakan background gelap yang sama */
+.app-loading,
+.app-loading-screen,
+.app-loading-page {
+  background: #02050a !important;
+  background-color: #02050a !important;
+}
+
+/* Jangan tampilkan bingkai/card lama */
+.app-loading-card::before,
+.app-loading-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Branding */
+.app-loading-company {
+  color: #d6ae58 !important;
+}

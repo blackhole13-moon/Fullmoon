@@ -1,0 +1,64 @@
+
+/*
+=========================================================
+LOGIN SAFE BACKGROUND
+JANGAN memindahkan AndroidCosmicBackground.
+Hanya atur layer dan pointer events.
+=========================================================
+*/
+
+/* Login transparan supaya background component yang terlihat */
+.unified-login-page.pt-cosmic-auth {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/*
+Background visual tidak boleh menerima sentuhan.
+Ini penting supaya tombol Login, Register, Forgot Password,
+close dan input tetap bisa diklik.
+*/
+.unified-login-page.pt-cosmic-auth > .pt-android-cosmic-bg {
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/*
+Card login selalu berada di atas background.
+*/
+.unified-login-page.pt-cosmic-auth > .login-modal-card,
+.unified-login-page.pt-cosmic-auth > .pt-auth-card,
+.unified-login-page.pt-cosmic-auth > .unified-login-card {
+  position: relative !important;
+  z-index: 20 !important;
+  pointer-events: auto !important;
+}
+
+/*
+Semua kontrol di dalam card wajib bisa disentuh.
+*/
+.unified-login-page.pt-cosmic-auth
+.login-modal-card
+button,
+.unified-login-page.pt-cosmic-auth
+.login-modal-card
+input,
+.unified-login-page.pt-cosmic-auth
+.login-modal-card
+a,
+.unified-login-page.pt-cosmic-auth
+.login-modal-card
+select,
+.unified-login-page.pt-cosmic-auth
+.login-modal-card
+textarea {
+  pointer-events: auto !important;
+}
+
+/*
+Jangan gunakan overlay putih pada Android.
+*/
+.unified-login-page.pt-cosmic-auth::before,
+.unified-login-page.pt-cosmic-auth::after {
+  pointer-events: none !important;
+}

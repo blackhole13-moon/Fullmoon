@@ -1,0 +1,1087 @@
+/* =========================================================
+   PROJECT BY TIRTA — ANDROID LOGIN + PROFILE POLISH
+   Android only
+   ========================================================= */
+
+/* -------------------------
+   LOGIN: gunakan Cosmic layer
+   ------------------------- */
+
+@media (max-width: 899px) {
+
+  .pt-cosmic-auth {
+    min-height: 100dvh !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding:
+      max(18px, env(safe-area-inset-top))
+      16px
+      max(18px, env(safe-area-inset-bottom))
+      16px !important;
+
+    background: transparent !important;
+    background-image: none !important;
+    overflow-y: auto !important;
+  }
+
+  /* Ukuran login mengikuti kira-kira garis hijau */
+  .pt-cosmic-auth .pt-auth-card {
+    width: min(480px, calc(100vw - 32px)) !important;
+    max-width: 480px !important;
+
+    height: auto !important;
+    max-height: min(700px, calc(100dvh - 28px)) !important;
+
+    margin: 0 auto !important;
+
+    padding: 20px !important;
+
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+
+    background: rgba(4, 12, 25, .90) !important;
+    border: 1px solid rgba(132, 166, 219, .32) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,.30) !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* -------------------------
+     LOGO: tanpa kotak/card
+     ------------------------- */
+
+  .pt-cosmic-auth .unified-brand {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .pt-cosmic-auth .unified-logo {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    min-height: 58px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-cosmic-auth .unified-logo img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  .pt-cosmic-auth .unified-brand strong {
+    font-size: 18px !important;
+  }
+
+  .pt-cosmic-auth .unified-brand small {
+    font-size: 10px !important;
+  }
+
+  /* Heading dipadatkan */
+  .pt-cosmic-auth .unified-login-heading h1 {
+    font-size: clamp(25px, 7vw, 31px) !important;
+    line-height: 1.08 !important;
+    margin: 7px 0 8px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-heading p {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form {
+    gap: 10px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form input {
+    min-height: 46px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form button {
+    min-height: 48px !important;
+  }
+
+  /* -------------------------
+     PROFILE: hilangkan card luar
+     ------------------------- */
+
+  .pt-profile-flat {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+
+    border-radius: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .pt-profile-flat .portal-profile {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-profile-flat .info-list {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-profile-flat .card-title {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* =========================================================
+   PROJECT BY TIRTA — ANDROID FLAT CONTENT PAGES
+   Semua card konten halaman dibuat flat.
+   Card utama seperti Kehadiran Hari Ini tetap dipertahankan.
+   ========================================================= */
+
+@media (max-width: 899px) {
+
+  /* Semua page-card */
+  .employee-portal-cosmic .pt-page-card {
+    background: transparent !important;
+    background-image: none !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Portal-card yang berada di dalam grid halaman */
+  .employee-portal-cosmic .pt-page-grid > .portal-card,
+  .employee-portal-cosmic .portal-grid.pt-page-grid > .portal-card,
+  .employee-portal-cosmic .payslip-grid.pt-page-grid > .portal-card {
+    background: transparent !important;
+    background-image: none !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Headings halaman tetap punya jarak visual tanpa kotak */
+  .employee-portal-cosmic .pt-page-card .card-title {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Form halaman */
+  .employee-portal-cosmic .pt-page-card .employee-form,
+  .employee-portal-cosmic .pt-page-card .request-list,
+  .employee-portal-cosmic .pt-page-card .info-list,
+  .employee-portal-cosmic .pt-page-card .schedule-grid,
+  .employee-portal-cosmic .pt-page-card .salary-lines {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Profil */
+  .employee-portal-cosmic .pt-page-card .portal-profile {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Tombol tetap memiliki visual */
+  .employee-portal-cosmic .pt-page-card button {
+    box-shadow: none !important;
+  }
+
+  /* Jangan flatten kartu kehadiran utama */
+  .employee-portal-cosmic .pt-safe-attendance-card,
+  .employee-portal-cosmic .pt-highlight-card {
+    background: inherit !important;
+    border: inherit !important;
+    border-radius: inherit !important;
+    box-shadow: inherit !important;
+  }
+}
+
+/* =========================================================
+   PROJECT BY TIRTA — FINAL ANDROID LOGIN + PROFILE
+   LOGIN : no card / compact / animated background
+   PROFILE : flat / centered identity information
+   ========================================================= */
+
+@media (max-width: 899px) {
+
+  /* =======================================================
+     LOGIN — FULL COSMIC BACKGROUND, NO OUTER CARD
+     ======================================================= */
+
+  .pt-cosmic-auth {
+    position: relative !important;
+    isolation: isolate !important;
+    min-height: 100dvh !important;
+    width: 100% !important;
+    overflow: hidden !important;
+
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  /* subtle moving atmosphere over the SAME background */
+  .pt-cosmic-auth::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: -30% !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+
+    background:
+      radial-gradient(
+        circle at 18% 28%,
+        rgba(110, 180, 255, .13) 0,
+        transparent 24%
+      ),
+      radial-gradient(
+        circle at 82% 70%,
+        rgba(170, 110, 255, .10) 0,
+        transparent 25%
+      ) !important;
+
+    animation: pt-login-atmosphere-drift 13s ease-in-out infinite alternate !important;
+    transform: translate3d(0,0,0) !important;
+  }
+
+  .pt-cosmic-auth::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: -20% !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+
+    background:
+      radial-gradient(
+        circle at 70% 20%,
+        rgba(120, 220, 255, .07) 0,
+        transparent 18%
+      ),
+      radial-gradient(
+        circle at 30% 80%,
+        rgba(210, 120, 255, .06) 0,
+        transparent 20%
+      ) !important;
+
+    animation: pt-login-glow-drift 17s ease-in-out infinite alternate-reverse !important;
+    transform: translate3d(0,0,0) !important;
+  }
+
+  /* =======================================================
+     LOGIN CARD — REMOVE CARD LOOK COMPLETELY
+     ======================================================= */
+
+  .pt-cosmic-auth .pt-auth-card,
+  .pt-cosmic-auth .unified-login-card,
+  .pt-cosmic-auth .login-modal-card {
+    position: relative !important;
+    z-index: 2 !important;
+
+    width: min(340px, calc(100vw - 34px)) !important;
+    max-width: 340px !important;
+
+    margin: 0 auto !important;
+    padding: 10px 8px !important;
+
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+
+    overflow: visible !important;
+  }
+
+  /* close button stays functional but visually light */
+  .pt-cosmic-auth .login-modal-close {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* brand */
+  .pt-cosmic-auth .unified-brand {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .pt-cosmic-auth .unified-logo {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    min-height: 52px !important;
+
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .pt-cosmic-auth .unified-brand strong {
+    font-size: 16px !important;
+  }
+
+  .pt-cosmic-auth .unified-brand small {
+    font-size: 9px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-heading {
+    margin-top: 2px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-heading h1 {
+    font-size: clamp(24px, 7vw, 29px) !important;
+    line-height: 1.08 !important;
+    margin: 4px 0 6px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-heading p {
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+    margin: 0 auto 10px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form {
+    gap: 9px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form input {
+    min-height: 44px !important;
+  }
+
+  .pt-cosmic-auth .unified-login-form button {
+    min-height: 46px !important;
+  }
+
+  /* bottom security block — remove second card */
+  .pt-cosmic-auth .unified-login-security {
+    position: relative !important;
+    z-index: 2 !important;
+
+    margin: 8px 0 0 !important;
+    padding: 4px 0 !important;
+
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    color: inherit !important;
+    text-align: center !important;
+  }
+
+  .pt-cosmic-auth .unified-login-register {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 5px 0 !important;
+  }
+
+  /* forgot-password panel should not create another visual card */
+  .pt-cosmic-auth .forgot-panel {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 6px 0 !important;
+  }
+
+  /* =======================================================
+     PROFILE — CENTER EMPLOYEE IDENTITY INFORMATION
+     ======================================================= */
+
+  .pt-profile-flat,
+  .employee-portal-cosmic .pt-page-card.pt-profile-flat,
+  .employee-portal-cosmic .portal-card.pt-profile-flat {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .pt-profile-flat .portal-profile {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+    gap: 7px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-profile-flat .portal-profile > div {
+    text-align: center !important;
+  }
+
+  .pt-profile-flat .portal-profile h3,
+  .pt-profile-flat .portal-profile p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .pt-profile-flat .info-list {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 100% !important;
+    gap: 12px !important;
+
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-profile-flat .info-list > div {
+    width: 100% !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .pt-profile-flat .info-list small,
+  .pt-profile-flat .info-list b {
+    display: block !important;
+    text-align: center !important;
+  }
+
+  .pt-profile-flat .info-list small {
+    margin-bottom: 3px !important;
+    opacity: .72 !important;
+  }
+
+  .pt-profile-flat .info-list b {
+    word-break: break-word !important;
+  }
+
+  .pt-profile-flat .pt-profile-logout {
+    display: block !important;
+    margin: 14px auto 0 !important;
+  }
+}
+
+/* =========================================================
+   LOGIN MOTION
+   ========================================================= */
+
+@keyframes pt-login-atmosphere-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(2%, 2%, 0) scale(1.035);
+  }
+
+  100% {
+    transform: translate3d(-1%, 3%, 0) scale(1.02);
+  }
+}
+
+@keyframes pt-login-glow-drift {
+  0% {
+    transform: translate3d(2%, -2%, 0) scale(1);
+    opacity: .65;
+  }
+
+  50% {
+    transform: translate3d(-2%, 2%, 0) scale(1.045);
+    opacity: .95;
+  }
+
+  100% {
+    transform: translate3d(1%, 3%, 0) scale(1.02);
+    opacity: .70;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-cosmic-auth::before,
+  .pt-cosmic-auth::after {
+    animation: none !important;
+  }
+}
+
+/* FINAL COSMIC FIX */
+.pt-cosmic-auth::before,
+.pt-cosmic-auth::after {
+  content: none !important;
+  display: none !important;
+  animation: none !important;
+}
+
+.pt-android-cosmic-bg-stars {
+  opacity: .68 !important;
+  animation: pt-cosmic-stars-stable 28s linear infinite alternate !important;
+}
+
+@keyframes pt-cosmic-stars-stable {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to   { transform: translate3d(-2%,1%,0) scale(1.01); }
+}
+
+.pt-android-cosmic-bg-glow {
+  opacity: .62 !important;
+  animation: pt-cosmic-glow-stable 26s ease-in-out infinite alternate !important;
+}
+
+@keyframes pt-cosmic-glow-stable {
+  from { transform: translate3d(-1%,0,0) scale(1); }
+  to   { transform: translate3d(1%,.5%,0) scale(1.04); }
+}
+
+/* FINAL LOGIN — SINGLE FULLSCREEN LAYOUT */
+.pt-cosmic-auth {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  padding: 20px !important;
+  overflow: hidden !important;
+}
+
+.pt-cosmic-auth > .pt-android-cosmic-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+}
+
+.pt-cosmic-auth > .pt-auth-card,
+.pt-cosmic-auth > .login-modal-card {
+  position: relative !important;
+  z-index: 2 !important;
+  width: min(340px, calc(100vw - 32px)) !important;
+  max-width: 340px !important;
+  margin: 0 !important;
+}
+.pt-cosmic-auth::before,
+.pt-cosmic-auth::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* FINAL LOGIN VIEWPORT LOCK */
+.pt-cosmic-auth {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px !important;
+}
+
+.pt-cosmic-auth > .pt-android-cosmic-bg {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+}
+
+.pt-cosmic-auth .login-modal-card,
+.pt-cosmic-auth .pt-auth-card {
+  position: relative !important;
+  z-index: 2 !important;
+  max-height: calc(100dvh - 32px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+/* LOGIN FINAL */
+.pt-cosmic-auth{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  padding:8px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+.pt-cosmic-auth>.pt-android-cosmic-bg{
+  position:fixed!important;
+  inset:0!important;
+  z-index:0!important;
+}
+
+.pt-cosmic-auth .login-modal-card,
+.pt-cosmic-auth .pt-auth-card{
+  position:relative!important;
+  z-index:3!important;
+  width:min(430px,calc(100vw - 20px))!important;
+  max-width:430px!important;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:0!important;
+  padding:12px 14px!important;
+  transform:scale(.82)!important;
+  transform-origin:center!important;
+}
+
+.pt-cosmic-auth .unified-logo{
+  width:44px!important;
+  height:44px!important;
+  margin-bottom:3px!important;
+}
+
+.pt-cosmic-auth .unified-login-form{
+  gap:7px!important;
+}
+
+.pt-cosmic-auth .unified-login-form input{
+  min-height:46px!important;
+  padding:9px 12px!important;
+}
+
+.pt-cosmic-auth::before,
+.pt-cosmic-auth::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* FINAL LOGIN BACKGROUND */
+html, body, #root {
+  background: #02050a !important;
+}
+
+.pt-cosmic-auth {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.pt-cosmic-auth > .pt-android-cosmic-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  z-index: 0 !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+.pt-cosmic-auth > .pt-android-cosmic-bg > div {
+  pointer-events: none !important;
+}
+
+.pt-cosmic-auth::before,
+.pt-cosmic-auth::after,
+.pt-cosmic-auth .pt-auth-card::before,
+.pt-cosmic-auth .pt-auth-card::after,
+.pt-cosmic-auth .login-modal-card::before,
+.pt-cosmic-auth .login-modal-card::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.pt-cosmic-auth .login-modal-card,
+.pt-cosmic-auth .pt-auth-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* REGISTER = LOGIN / HOME COSMIC */
+.pt-cosmic-register{
+  position:relative!important;
+  min-height:100dvh!important;
+  width:100%!important;
+  overflow:hidden!important;
+  background:transparent!important;
+}
+
+.pt-cosmic-register > .pt-android-cosmic-bg{
+  position:fixed!important;
+  inset:0!important;
+  z-index:0!important;
+}
+
+.pt-register-content{
+  position:relative!important;
+  z-index:2!important;
+  min-height:100dvh!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  padding:16px!important;
+}
+
+.pt-cosmic-register .registration-page,
+.pt-cosmic-register .registration-shell,
+.pt-cosmic-register .registration-card{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* REGISTER ANDROID — SAME COSMIC ENVIRONMENT */
+.pt-cosmic-register{
+  position:relative!important;
+  width:100vw!important;
+  min-height:100dvh!important;
+  overflow:hidden!important;
+  background:transparent!important;
+}
+
+.pt-cosmic-register .registration-shell,
+.pt-cosmic-register .registration-success{
+  position:relative!important;
+  z-index:2!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.pt-cosmic-register .registration-card,
+.pt-cosmic-register .registration-success-box{
+  background:rgba(5,15,30,.42)!important;
+  border:1px solid rgba(214,174,88,.28)!important;
+  box-shadow:0 12px 40px rgba(0,0,0,.24)!important;
+  backdrop-filter:blur(8px)!important;
+}
+
+/* REGISTER — FLAT SECTIONS, ONE MAIN CONTAINER */
+.pt-cosmic-register .registration-section {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 12px 0 !important;
+  margin: 0 !important;
+}
+
+.pt-cosmic-register .registration-section + .registration-section {
+  border-top: 1px solid rgba(214,174,88,.12) !important;
+}
+
+.pt-cosmic-register .registration-card {
+  background: rgba(5,15,30,.34) !important;
+  border: 1px solid rgba(214,174,88,.25) !important;
+  box-shadow: 0 16px 45px rgba(0,0,0,.22) !important;
+}
+
+/* REGISTER — HILANGKAN CARD UTAMA */
+.pt-cosmic-register .registration-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.pt-cosmic-register .registration-shell {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+
+.pt-cosmic-register .registration-card,
+.pt-cosmic-register .registration-shell {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+
+.registration-page.pt-cosmic-register .registration-card {
+  all: unset !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
+}
+
+
+/* =========================================================
+   REGISTER — FLAT COSMIC / NO CARD
+   ========================================================= */
+.pt-cosmic-register .registration-card,
+.pt-cosmic-register .registration-success-box,
+.pt-cosmic-register .registration-section {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.pt-cosmic-register .registration-section + .registration-section {
+  border-top: 0 !important;
+}
+
+.pt-cosmic-register .registration-shell,
+.pt-cosmic-register .registration-success {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.pt-cosmic-register .registration-card {
+  padding: 0 !important;
+}
+
+/* LOGIN FINAL CLEAN OVERRIDE */
+.pt-cosmic-auth {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.pt-cosmic-auth > .pt-android-cosmic-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+.pt-cosmic-auth > .pt-auth-card,
+.pt-cosmic-auth > .login-modal-card,
+.pt-cosmic-auth > .unified-login-card {
+  position: relative !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  transform: none !important;
+}
+
+.pt-cosmic-auth .unified-login-form,
+.pt-cosmic-auth input,
+.pt-cosmic-auth button,
+.pt-cosmic-auth a {
+  pointer-events: auto !important;
+}
+
+.pt-cosmic-auth::before,
+.pt-cosmic-auth::after {
+  pointer-events: none !important;
+  display: none !important;
+}
+
+/* HILANGKAN BACKGROUND CARD LOGIN, TETAPKAN ISINYA */
+.pt-cosmic-auth .login-modal-card,
+.pt-cosmic-auth .pt-auth-card,
+.pt-cosmic-auth .unified-login-card {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+
+/* HILANGKAN KOTAK HITAM LOGIN */
+.pt-cosmic-auth .pt-auth-card,
+.pt-cosmic-auth .unified-login-card.login-modal-card {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* STARTUP / SESSION CHECK TANPA CARD LAMA */
+.app-loading-screen {
+  min-height: 100dvh !important;
+  background: #02050a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+
+.app-loading-screen .pt-loading-brand {
+  position: relative !important;
+  z-index: 5 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.app-loading-screen .pt-loading-brand img {
+  width: 78px !important;
+  height: 78px !important;
+  object-fit: contain !important;
+  margin-bottom: 14px !important;
+}
+
+.app-loading-screen .pt-loading-brand strong {
+  color: #ffffff !important;
+  font-size: 22px !important;
+}
+
+.app-loading-screen .pt-loading-brand span {
+  color: #aeb7c5 !important;
+  font-size: 13px !important;
+  margin-top: 5px !important;
+}
+
+/* HILANGKAN CARD/BOX, BUKAN TOMBOL */
+.employee-topbar,
+.pt-feature-topbar,
+.pt-bottom-nav {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Tetap pertahankan tombol dan interaksinya */
+.employee-topbar button,
+.pt-feature-topbar button,
+.pt-bottom-nav button {
+  position: relative !important;
+  z-index: 5 !important;
+  pointer-events: auto !important;
+}
+
+/* TOP HEADER: HILANGKAN CARD + JUDUL, TOMBOL KEMBALI TETAP ADA */
+.employee-topbar.pt-feature-topbar {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.employee-topbar.pt-feature-topbar .pt-feature-topbar-title {
+  display: none !important;
+}
+
+.employee-topbar.pt-feature-topbar .pt-back-button {
+  display: flex !important;
+  pointer-events: auto !important;
+}
+
+
+
+/* HEADER CARD TRANSPARAN - IKON KEMBALI TETAP ADA */
+.employee-topbar.pt-feature-topbar {
+  display: flex !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.employee-topbar.pt-feature-topbar .pt-back-button {
+  display: flex !important;
+  pointer-events: auto !important;
+}
+
+/* WEB COSMIC BACKGROUND - BACKGROUND SAJA */
+.pt-web-cosmic-auth {
+  position: relative !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.pt-web-cosmic-auth > .pt-android-cosmic-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+.pt-web-cosmic-auth > .login-modal-card,
+.pt-web-cosmic-auth > .unified-login-card {
+  position: relative !important;
+  z-index: 2 !important;
+}
