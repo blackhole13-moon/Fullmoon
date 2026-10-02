@@ -4,12 +4,19 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import { LanguageProvider } from './locales/LanguageContext';
 import { registerPwa } from './pwa';
-import { initializeCosmicTheme } from './theme/professionalTheme';
+import { initializeCosmicTheme, installProjectByTirtaTheme } from './theme/professionalTheme';
 import { installLoadingStyles } from './loading-real-final-v57.15';
 import { installProjectTirtaAndroidPolish } from './theme/projectTirtaAndroidPolish';
 
 import './styles/android-cosmic-background.css';
 registerPwa();
+
+//
+// Web/PWA juga wajib memasang runtime stylesheet utama.
+// Inisialisasi Cosmic khusus Android tetap dipisahkan.
+//
+
+installProjectByTirtaTheme();
 if (Capacitor.getPlatform() === 'android') {
   initializeCosmicTheme();
   installProjectTirtaAndroidPolish();
