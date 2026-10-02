@@ -522,3 +522,115 @@ Jangan gunakan overlay putih pada Android.
     filter: none !important;
   }
 }
+
+/* =========================================================
+   PROJECT BY TIRTA — ANDROID LOGIN
+   SEMUA COSMIC THEME = POLA VISUAL AURORA
+   Hanya artwork/gambar tema yang berbeda.
+   ========================================================= */
+
+@media (max-width: 899px) {
+
+  /* ROOT LOGIN TRANSPARAN */
+  html[data-cosmic-theme="sun"] .unified-login-page.pt-cosmic-auth,
+  html[data-cosmic-theme="moon"] .unified-login-page.pt-cosmic-auth,
+  html[data-cosmic-theme="galaxy"] .unified-login-page.pt-cosmic-auth,
+  html[data-cosmic-theme="blackhole"] .unified-login-page.pt-cosmic-auth,
+  html[data-cosmic-theme="nebula"] .unified-login-page.pt-cosmic-auth,
+  html[data-cosmic-theme="aurora"] .unified-login-page.pt-cosmic-auth {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* BACKGROUND COMPONENT = ARTWORK UTAMA */
+  html[data-cosmic-theme] .unified-login-page.pt-cosmic-auth
+    > .pt-android-cosmic-bg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    overflow: hidden !important;
+  }
+
+  /* SEMUA LAYER TAMBAHAN DIMATIKAN.
+     Gambar asli menjadi visual utama seperti Aurora. */
+  html[data-cosmic-theme]
+    .unified-login-page.pt-cosmic-auth
+    > .pt-android-cosmic-bg
+    .pt-android-cosmic-bg-glow,
+  html[data-cosmic-theme]
+    .unified-login-page.pt-cosmic-auth
+    > .pt-android-cosmic-bg
+    .pt-android-cosmic-bg-stars {
+    display: none !important;
+  }
+
+  /* ARTWORK TETAP TAJAM DAN TIDAK DIZOOM / DITRANSFORM */
+  html[data-cosmic-theme]
+    .unified-login-page.pt-cosmic-auth
+    > .pt-android-cosmic-bg
+    .pt-android-cosmic-bg-art {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: 100% 100% !important;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  /* CARD LOGIN = TRANSPARAN, SAMA SEPERTI AURORA */
+  html[data-cosmic-theme="sun"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card,
+  html[data-cosmic-theme="moon"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card,
+  html[data-cosmic-theme="galaxy"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card,
+  html[data-cosmic-theme="blackhole"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card,
+  html[data-cosmic-theme="nebula"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card,
+  html[data-cosmic-theme="aurora"] .unified-login-page.pt-cosmic-auth
+    > .login-modal-card {
+    position: relative !important;
+    z-index: 10 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* PSEUDO OVERLAY = MATI */
+  html[data-cosmic-theme] .unified-login-page.pt-cosmic-auth::before,
+  html[data-cosmic-theme] .unified-login-page.pt-cosmic-auth::after {
+    content: none !important;
+    display: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* FORM SENDIRI TETAP TERBACA */
+  html[data-cosmic-theme] .unified-login-page.pt-cosmic-auth
+    .unified-login-form input {
+    background: rgba(5, 15, 30, .72) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+}

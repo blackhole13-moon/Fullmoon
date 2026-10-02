@@ -802,7 +802,7 @@ export default function IDCardModule({ employees, companyName, logoUrl }: Props)
   if (!employee) return <div className="panel"><p>{t('no_employee_for_id_card')}</p></div>;
 
   return (
-    <div className={`id-card-module${isAndroidApp ? " id-card-module-android" : ""}`}>
+    <div className={`id-card-module ${orientation === "vertical" ? "id-card-module-vertical" : "id-card-module-horizontal"}${isAndroidApp ? " id-card-module-android" : ""}`}>
       <div className="page-heading">
         <div><h1>{t('employee_id_card')}</h1><p>{t('id_card_desc')}</p></div>
         <button className="primary" onClick={cetakCurrent}>🖨️ Cetak Kartu</button>

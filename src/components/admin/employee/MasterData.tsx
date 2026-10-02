@@ -112,7 +112,7 @@ export default function MasterData({
   }, [initialTab]);
 
   return (
-    <div style={styles.wrapper}>
+    <div className="master-data-module" style={styles.wrapper}>
       <div style={styles.header}>
         <div>
           <div style={styles.eyebrow}>{t("master_data_hris")}</div>
@@ -1042,12 +1042,12 @@ function ShiftModule() {
 
       <div style={styles.shiftGrid}>
         {loading ? (
-          <div style={styles.loadingBox}>{t('loading_shift')}</div>
+          <div className="master-data-loading-box" style={styles.loadingBox}>{t('loading_shift')}</div>
         ) : filtered.length === 0 ? (
-          <div style={styles.loadingBox}>{t('no_shift_data')}</div>
+          <div className="master-data-loading-box" style={styles.loadingBox}>{t('no_shift_data')}</div>
         ) : (
           filtered.map((item) => (
-            <div style={styles.shiftCard} key={item.id}>
+            <div className="master-data-shift-card" style={styles.shiftCard} key={item.id}>
               <div style={styles.shiftTop}>
                 <div>
                   <div style={styles.shiftName}>{item.nama}</div>
@@ -1617,7 +1617,7 @@ function SectionHeader({
 
 function TableCard({ children }: { children: React.ReactNode }) {
   return (
-    <div style={styles.tableCard}>{children}</div>
+    <div className="master-data-table-card" style={styles.tableCard}>{children}</div>
   );
 }
 
