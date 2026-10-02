@@ -19,6 +19,7 @@ import EnterpriseRoadmapV26V35 from '../enterprise/EnterpriseRoadmapV26V35';
 import ProfessionalSuite from '../enterprise/ProfessionalSuite';
 import moonLogo from '../../../assets/moon-logo.png';
 import IDCardModule from '../employee/IDCardModule';
+import SiDebarFloatingNavigator from '../../common/SiDebarFloatingNavigator';
 
 import { useTranslation } from '../../../locales/LanguageContext';
 import { appAlert, appConfirm, appPrompt } from '../../../lib/app-dialog';
@@ -26,6 +27,7 @@ import AdminAnnouncementManager from '../../../features/announcements/AdminAnnou
 import type { Announcement } from '../../../features/announcements/types';
 import AttendanceUnified from './AttendanceUnified';
 import { getCosmicTheme, COSMIC_THEMES, type CosmicThemeId } from '../../../theme/professionalTheme';
+import AICenter from './AICenter';
 import {
   loadUserThemePreference,
   saveUserThemePreference,
@@ -101,7 +103,7 @@ type MenuKey =
   | 'payroll' | 'production-hr' | 'payroll-engine' | 'payroll-production-v22' | 'payroll-components' | 'payroll-overtime' | 'payslip'
   | 'performance' | 'kpi' | 'recruitment-v25' | 'recruitment' | 'candidates'
   | 'reports' | 'settings' | 'roles' | 'audit' | 'notifications' | 'feedback' | 'announcements' | 'system-health'
-  | 'professional-suite' | 'enterprise-v20' | 'security-v21' | 'payroll-indonesia-v23'
+  | 'professional-suite' | 'ai-center' | 'enterprise-v20' | 'security-v21' | 'payroll-indonesia-v23'
   | `enterprise-v${26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35}`;
 
 const isoToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
@@ -116,7 +118,7 @@ const rolePermissions: Record<string, string[]> = {
 };
 
 const menuGroup = (key: MenuKey) => 
-  ['professional-suite'].includes(key) ? 'system' : 
+  ['professional-suite', 'ai-center'].includes(key) ? 'system' : 
   ['employees', 'employee-new', 'employee-inactive', 'id-card', 'employee-360', 'employee-add', 'organization'].includes(key) ? 'people' :
   ['attendance', 'attendance-today', 'late', 'leave', 'overtime', 'selfie'].includes(key) ? 'attendance' : 
   ['schedule', 'shift', 'holiday'].includes(key) ? 'schedule' : 
@@ -134,6 +136,7 @@ const menuGroup = (key: MenuKey) =>
   (key === 'enterprise-v26' || key === 'payroll-indonesia-v23' || key === 'security-v21') ? 'system' : 'overview';
 
 const requiredPermission = (key: MenuKey) => {
+  if (key === 'ai-center') return 'ai_hr_center';
   if (key === 'professional-suite') return 'system.health';
   if (key === 'hr-operations') return 'people.read';
   if (key === 'production-hr' || key === 'payroll-engine' || key === 'payroll-production-v22') return 'payroll.read';
@@ -757,6 +760,7 @@ export default function DashboardAdmin() {
       title: t('main'),
       items: [
         ['overview', t('home'), 'home'] as [MenuKey, string, string],
+        ['ai-center', t('ai_hr_center'), 'kpi'] as [MenuKey, string, string],
         ['professional-suite', t('professional_operations'), 'kpi'] as [MenuKey, string, string],
         ['attendance', t('attendance'), 'clock'] as [MenuKey, string, string],
         ['reports', t('reports'), 'report'] as [MenuKey, string, string],
@@ -1186,6 +1190,7 @@ return (
       </div>
       {/* ======================================================== */}
     </aside>
+    <SiDebarFloatingNavigator />
    <main className="talenta-main"><header className="topbar">
 <div className="topbar-left"><button className="icon-btn" aria-label="Buka menu" onClick={()=>setSidebar(v=>!v)}><Icon name="menu"/></button>
 <div className="crumb"><span>Project by Tirta</span><b>/</b>{activeLabel}</div>
@@ -1424,6 +1429,7 @@ return (
 
     <section className="page admin-page-frame">{loading&&<div className="loading">Memuat data…</div>}{error&&<div className="alert">{error}</div>}
     {menu==='overview'&&<Overview employees={employees} attendance={attendance} payroll={payroll} onNavigate={navigate} profileName={profileName}/>}
+    {menu==='ai-center'&&<AICenter dbPerms={dbPerms} userRole={userRole}/>}
     {menu==='professional-suite'&&<ProfessionalSuite employees={employees} attendance={attendance} onNavigate={navigate}/>}
     {menu==='id-card'&&<IDCardModule employees={employees} companyName="Project by Tirta" logoUrl={moonLogo}/> }
     {menu==='employees'&&<Employees data={employees.filter(k => k.status_aktif !== false)} onDelete={removeEmployee} onEdit={setEditing} onExport={(columns, format)=>format==='excel' ? exportExcel(employees.filter(k => k.status_aktif !== false) as any,'database-karyawan.xls',columns) : exportCsv(employees.filter(k => k.status_aktif !== false) as any,'database-karyawan.csv',columns)} onAdd={()=>navigate('employee-add')} />}
