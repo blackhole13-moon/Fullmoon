@@ -4875,7 +4875,293 @@ export function initializeCosmicTheme(): void {
       html[data-cosmic-theme="nebula"] .pt-cosmic-auth .pt-auth-card{border-color:rgba(255,191,232,.72)!important}
       html[data-cosmic-theme="sun"] .pt-cosmic-auth .pt-auth-card .unified-login-form input{background:#2a1808!important;border-color:rgba(248,218,142,.38)!important;color:#fff6e8!important}
       html[data-cosmic-theme="sun"] .pt-cosmic-auth .pt-auth-card .unified-login-button{background:linear-gradient(135deg,#f8da8e,#d9a947)!important}
-    `;
+
+      /* =========================================================
+         FINAL MOBILE WEB LAYOUT
+         Sidebar = drawer, content = full viewport.
+         ========================================================= */
+      @media (max-width: 900px) {
+        html, body, #root {
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+        }
+
+        .talenta-shell {
+          display: block !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          min-height: 100dvh !important;
+          overflow-x: hidden !important;
+        }
+
+        .talenta-shell .sidebar,
+        .talenta-shell .talenta-sidebar {
+          position: fixed !important;
+          inset: 0 auto 0 0 !important;
+          width: min(82vw, 280px) !important;
+          max-width: 280px !important;
+          height: 100dvh !important;
+          z-index: 1000 !important;
+          transform: translateX(-110%) !important;
+          transition: transform .22s ease !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+        }
+
+        .talenta-shell .sidebar.open,
+        .talenta-shell .talenta-sidebar.open {
+          transform: translateX(0) !important;
+        }
+
+        .talenta-shell .sidebar.collapsed,
+        .talenta-shell .talenta-sidebar.collapsed {
+          transform: translateX(-110%) !important;
+        }
+
+        .talenta-main {
+          display: block !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+        }
+
+        .talenta-main .topbar {
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          display: grid !important;
+          grid-template-columns: auto minmax(0,1fr) auto !important;
+          gap: 7px !important;
+          min-height: 56px !important;
+          padding: 8px 10px !important;
+          flex-wrap: nowrap !important;
+        }
+
+        .talenta-main .topbar-left {
+          min-width: 0 !important;
+          overflow: hidden !important;
+        }
+
+        .talenta-main .crumb {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow: hidden !important;
+          white-space: nowrap !important;
+          text-overflow: ellipsis !important;
+        }
+
+        .talenta-main .search-global {
+          display: none !important;
+        }
+
+        .talenta-main .top-actions {
+          min-width: 0 !important;
+          max-width: 45vw !important;
+          overflow: hidden !important;
+          flex-wrap: nowrap !important;
+          gap: 4px !important;
+        }
+
+        .admin-page-frame {
+          width: 100% !important;
+          max-width: 100% !important;
+          min-width: 0 !important;
+          padding: 12px 10px 90px !important;
+          overflow-x: hidden !important;
+        }
+
+        .admin-page-frame > * {
+          min-width: 0 !important;
+          max-width: 100% !important;
+        }
+
+        .si-debar-floating-nav {
+          display: none !important;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .talenta-shell .dashboard-grid-top,
+        .talenta-shell .dashboard-grid-bottom,
+        .talenta-shell .content-grid,
+        .talenta-shell .report-grid,
+        .talenta-shell .action-card-grid,
+        .talenta-shell .pt-page-grid {
+          grid-template-columns: minmax(0,1fr) !important;
+        }
+
+        .talenta-shell .stat-grid {
+          grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+        }
+
+        .talenta-shell .table-wrap,
+        .talenta-shell .table-scroll {
+          width: 100% !important;
+          max-width: 100% !important;
+          overflow-x: auto !important;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .talenta-shell .stat-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .talenta-main .topbar .top-actions {
+          max-width: 40vw !important;
+        }
+
+        .topbar .top-actions > .admin-floating-notification-group {
+          display: none !important;
+        }
+
+        .admin-page-frame {
+          padding-left: 8px !important;
+          padding-right: 8px !important;
+        }
+      }
+
+    
+/* =========================================================
+   PROJECT BY TIRTA — FINAL ANDROID ADMIN LAYOUT REPAIR
+   ========================================================= */
+@media (max-width:899px) {
+  html, body, #root {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+    overflow-x:hidden !important;
+  }
+
+  .talenta-shell {
+    display:block !important;
+    width:100vw !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    min-height:100dvh !important;
+    height:auto !important;
+    overflow:visible !important;
+    position:relative !important;
+  }
+
+  .talenta-shell > .talenta-main,
+  .talenta-main {
+    display:block !important;
+    width:100% !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    margin:0 !important;
+    flex:none !important;
+    overflow-x:hidden !important;
+    overflow-y:visible !important;
+  }
+
+  .talenta-shell > .talenta-main > .topbar,
+  .topbar {
+    width:100% !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+  }
+
+  .talenta-shell > .talenta-main > .page,
+  .page {
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    box-sizing:border-box !important;
+    overflow:visible !important;
+  }
+
+  /* Sidebar Android = overlay, tidak boleh mengambil lebar halaman */
+  .talenta-shell > .sidebar,
+  .sidebar {
+    position:fixed !important;
+    left:0 !important;
+    top:0 !important;
+    bottom:0 !important;
+    z-index:99999 !important;
+    width:min(290px,82vw) !important;
+    min-width:0 !important;
+    max-width:290px !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    margin:0 !important;
+    flex:none !important;
+    box-sizing:border-box !important;
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+    transform:translateX(-110%) !important;
+    transition:transform .22s ease !important;
+  }
+
+  .talenta-shell > .sidebar.open,
+  .sidebar.open,
+  .sidebar.is-open {
+    transform:translateX(0) !important;
+  }
+
+  .talenta-shell > .sidebar.collapsed,
+  .sidebar.collapsed,
+  .sidebar.is-closed {
+    width:min(290px,82vw) !important;
+    min-width:0 !important;
+    max-width:290px !important;
+    flex-basis:auto !important;
+    transform:translateX(-110%) !important;
+  }
+
+  /* Konten selalu full-width */
+  .talenta-shell > .sidebar + .talenta-main {
+    width:100% !important;
+    max-width:100vw !important;
+    min-width:0 !important;
+    margin-left:0 !important;
+  }
+
+  .sidebar.open .nav-item > span,
+  .sidebar.is-open .nav-item > span,
+  .sidebar.open .sidebar-head .brand > div:last-child,
+  .sidebar.is-open .sidebar-head .brand > div:last-child {
+    display:block !important;
+    min-width:0 !important;
+  }
+
+  .sidebar.open .nav-item {
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .sidebar.collapsed .nav-item > span,
+  .sidebar.is-closed .nav-item > span {
+    display:none !important;
+  }
+
+  .page-heading,
+  .dashboard-grid,
+  .content-grid,
+  .report-grid,
+  .action-card-grid,
+  .pt-page-grid,
+  .stat-grid {
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+  }
+
+  .table-wrap,
+  .data-table-wrap {
+    max-width:100% !important;
+    overflow-x:auto !important;
+  }
+}
+
+`;
     document.head.appendChild(pageBackgroundFix);
 
   }
