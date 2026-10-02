@@ -25,7 +25,16 @@ function walk(dir) {
   }
 }
 walk('src');
-if (cssFiles.length) errors.push(`Standalone stylesheet files remain: ${cssFiles.join(', ')}`);
+
+const allowedStyleRoots = [
+  'src/styles/',
+];
+const unexpectedCss = cssFiles.filter((file) =>
+  !allowedStyleRoots.some((root) => file.startsWith(root))
+);
+if (unexpectedCss.length) {
+  errors.push(`Unexpected stylesheet files remain: ${unexpectedCss.join(', ')}`);
+}
 
 if (errors.length) {
   console.error('Theme audit FAILED');

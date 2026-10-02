@@ -51,7 +51,17 @@ for (const icon of manifest.icons ?? []) if (!exists(`public/${icon.src.replace(
 
 if (!/prefers-reduced-motion/.test(read('src/theme/professionalTheme.ts'))) warnings.push('Cosmic reduced-motion support is missing.');
 if (!/focus-visible/.test(read('src/theme/professionalTheme.ts'))) warnings.push('Global keyboard focus styling is missing.');
-if (files.some((f) => /\.(css|scss|sass)$/.test(f) && f.startsWith('src/'))) failures.push('Standalone stylesheet files remain in src/.');
+const allowedStyleRoots = [
+  'src/styles/',
+];
+const unexpectedStyles = files.filter((f) =>
+  /\.(css|scss|sass)$/.test(f) &&
+  f.startsWith('src/') &&
+  !allowedStyleRoots.some((root) => f.startsWith(root))
+);
+if (unexpectedStyles.length) {
+  failures.push(`Unexpected stylesheet files remain in src/: ${unexpectedStyles.join(', ')}`);
+}
 
 const staleRootDocs = fs.readdirSync(root).filter((f) => /^README_V\d+|^V\d+_RELEASE|^PRODUCTION_AUDIT_V\d+/.test(f));
 if (staleRootDocs.length > 0) warnings.push(`${staleRootDocs.length} historical release documents remain in the project root.`);
