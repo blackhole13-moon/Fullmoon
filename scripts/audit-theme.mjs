@@ -13,7 +13,7 @@ if (!/id:'custom'/.test(fs.readFileSync('src/components/admin/dashboard/Dashboar
 if (!/localStorage\.setItem\(THEME_STORAGE_KEY/.test(themeFile)) errors.push('Cosmic theme persistence missing.');
 if (!/prefers-reduced-motion/.test(themeFile)) errors.push('Reduced-motion support missing.');
 if (!/@keyframes pt-(sun-breathe|moon-drift|galaxy-rotate|blackhole-orbit|nebula-flow)/.test(themeFile)) errors.push('Animated cosmic theme keyframes missing.');
-if (!/applyCosmicTheme\(/.test(dashboardFile)) errors.push('Theme switcher action missing.');
+if (!/applyProjectTheme\(/.test(dashboardFile)) errors.push('Theme switcher action missing.');
 if (!/COSMIC_THEMES\[id\]\.name/.test(dashboardFile)) errors.push('Theme switcher labels missing.');
 
 const cssFiles = [];

@@ -323,7 +323,7 @@ export default function RegistrasiKaryawan({ onBack }: RegistrasiKaryawanProps) 
   }
 
   return (
-    <div className="registration-page pt-cosmic-register">
+    <div className={`registration-page${IS_ANDROID_APP ? ' pt-cosmic-register' : ''}`}>
         <AndroidCosmicBackground />
       <div className="registration-shell">
 

@@ -80,55 +80,55 @@ export default function BPJSModule() {
   const totalKet = employees.filter(e => (e.nomor_bpjs_ketenagakerjaan || e.bpjs_ketenagakerjaan)).length;
 
   return (
-    <div className="panel" style={{ padding: '24px' }}>
-      <div className="page-heading" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div className="bpjs-module web-card-group">
+      <div className="page-heading bpjs-page-heading">
         <div>
           <h2>{t('bpjs_compliance_title')}</h2>
-          <p style={{ color: '#667085', fontSize: '13px' }}>{t('bpjs_compliance_desc')}</p>
+          <p>{t('bpjs_compliance_desc')}</p>
         </div>
       </div>
 
       {/* Ringkasan Statistik BPJS */}
-      <div className="mini-kpi-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginBottom: '20px' }}>
-        <div className="stat-card" style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #d8dee8' }}>
-          <span style={{ fontSize: '12px', color: '#667085' }}>{t('total_employees')}</span>
-          <strong style={{ fontSize: '22px', display: 'block', marginTop: '4px' }}>{employees.length}</strong>
+      <div className="mini-kpi-row bpjs-kpi-grid">
+        <div className="stat-card bpjs-kpi-card">
+          <span>{t('total_employees')}</span>
+          <strong>{employees.length}</strong>
         </div>
-        <div className="stat-card" style={{ padding: '16px', background: '#ecfdf3', borderRadius: '12px', border: '1px solid #abefc6' }}>
-          <span style={{ fontSize: '12px', color: '#087443' }}>{t('bpjs_health_registered')}</span>
-          <strong style={{ fontSize: '22px', display: 'block', marginTop: '4px', color: '#087443' }}>{totalKes} / {employees.length}</strong>
+        <div className="stat-card bpjs-kpi-card bpjs-kpi-card--health">
+          <span>{t('bpjs_health_registered')}</span>
+          <strong>{totalKes} / {employees.length}</strong>
         </div>
-        <div className="stat-card" style={{ padding: '16px', background: '#eff8ff', borderRadius: '12px', border: '1px solid #b2ddff' }}>
-          <span style={{ fontSize: '12px', color: '#175cd3' }}>{t('bpjs_work_registered')}</span>
-          <strong style={{ fontSize: '22px', display: 'block', marginTop: '4px', color: '#175cd3' }}>{totalKet} / {employees.length}</strong>
+        <div className="stat-card bpjs-kpi-card bpjs-kpi-card--work">
+          <span>{t('bpjs_work_registered')}</span>
+          <strong>{totalKet} / {employees.length}</strong>
         </div>
       </div>
 
-      {notice && <div style={{ padding: '10px 14px', background: '#ecfdf3', color: '#087443', borderRadius: '8px', marginBottom: '15px', fontSize: '13px' }}>{notice}</div>}
-      {error && <div style={{ padding: '10px 14px', background: '#fef3f2', color: '#b42318', borderRadius: '8px', marginBottom: '15px', fontSize: '13px' }}>{error}</div>}
+      {notice && <div className="bpjs-notice">{notice}</div>}
+      {error && <div className="bpjs-error">{error}</div>}
 
-      <div style={{ marginBottom: '15px' }}>
+      <div className="bpjs-search-row">
         <input
           type="text"
           placeholder={t("search_employee_id_department")}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ width: '100%', maxWidth: '380px', padding: '10px 14px', borderRadius: '8px', border: '1px solid #d8dee8', fontSize: '13px' }}
+          className="bpjs-search"
         />
       </div>
 
       {loading ? (
-        <p style={{ textAlign: 'center', padding: '30px', color: '#667085' }}>{t('loading_bpjs')}</p>
+        <p className="bpjs-loading">{t('loading_bpjs')}</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+        <div className="bpjs-table-wrap">
+          <table className="bpjs-table">
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #d8dee8', textAlign: 'left' }}>
-                <th style={{ padding: '12px' }}>{t('employee')}</th>
-                <th style={{ padding: '12px' }}>{t('department_position')}</th>
-                <th style={{ padding: '12px' }}>{t('bpjs_health_number')}</th>
-                <th style={{ padding: '12px' }}>{t('bpjs_work_number')}</th>
-                <th style={{ padding: '12px', textAlign: 'right' }}>{t('actions')}</th>
+              <tr className="bpjs-table-head">
+                <th className="bpjs-cell">{t('employee')}</th>
+                <th className="bpjs-cell">{t('department_position')}</th>
+                <th className="bpjs-cell">{t('bpjs_health_number')}</th>
+                <th className="bpjs-cell">{t('bpjs_work_number')}</th>
+                <th className="bpjs-cell bpjs-cell--right">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -138,16 +138,16 @@ export default function BPJSModule() {
                 const noKet = emp.nomor_bpjs_ketenagakerjaan || emp.bpjs_ketenagakerjaan;
 
                 return (
-                  <tr key={emp.id} style={{ borderBottom: '1px solid #eef1f5' }}>
-                    <td style={{ padding: '12px' }}>
+                  <tr key={emp.id} className="bpjs-table-row">
+                    <td className="bpjs-cell">
                       <b>{emp.nama}</b>
                       <small style={{ display: 'block', color: '#667085' }}>{emp.id_karyawan}</small>
                     </td>
-                    <td style={{ padding: '12px' }}>
+                    <td className="bpjs-cell">
                       <span>{emp.departemen || '-'}</span>
                       <small style={{ display: 'block', color: '#667085' }}>{emp.jabatan || '-'}</small>
                     </td>
-                    <td style={{ padding: '12px' }}>
+                    <td className="bpjs-cell">
                       {isEditing ? (
                         <input
                           type="text"
@@ -160,7 +160,7 @@ export default function BPJSModule() {
                         <span style={{ color: noKes ? '#172033' : '#98a2b3' }}>{noKes || 'Belum diisi'}</span>
                       )}
                     </td>
-                    <td style={{ padding: '12px' }}>
+                    <td className="bpjs-cell">
                       {isEditing ? (
                         <input
                           type="text"
@@ -173,14 +173,14 @@ export default function BPJSModule() {
                         <span style={{ color: noKet ? '#172033' : '#98a2b3' }}>{noKet || 'Belum diisi'}</span>
                       )}
                     </td>
-                    <td style={{ padding: '12px', textAlign: 'right' }}>
+                    <td className="bpjs-cell bpjs-cell--right">
                       {isEditing ? (
                         <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                          <button onClick={() => handleSave(emp.id)} className="primary" style={{ padding: '6px 12px', fontSize: '11px' }}>{t("save")}</button>
-                          <button onClick={() => setEditingId(null)} style={{ padding: '6px 12px', fontSize: '11px', background: '#eef2f7', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>{t("cancel")}</button>
+                          <button onClick={() => handleSave(emp.id)} className="primary">{t("save")}</button>
+                          <button onClick={() => setEditingId(null)} className="secondary">{t("cancel")}</button>
                         </div>
                       ) : (
-                        <button onClick={() => handleEdit(emp)} style={{ padding: '6px 12px', fontSize: '11px', background: '#f8fafc', border: '1px solid #d8dee8', borderRadius: '6px', cursor: 'pointer' }}>{t("edit_bpjs")}</button>
+                        <button onClick={() => handleEdit(emp)} className="secondary">{t("edit_bpjs")}</button>
                       )}
                     </td>
                   </tr>
@@ -188,7 +188,7 @@ export default function BPJSModule() {
               })}
               {!filtered.length && (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center', padding: '24px', color: '#667085' }}>{t('no_employees_found')}</td>
+                  <td colSpan={5} className="bpjs-empty-cell">{t('no_employees_found')}</td>
                 </tr>
               )}
             </tbody>

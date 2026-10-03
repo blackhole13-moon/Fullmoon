@@ -21,7 +21,7 @@ import moonLogo from '../../../assets/moon-logo.png';
 import IDCardModule from '../employee/IDCardModule';
 import SiDebarFloatingNavigator from '../../common/SiDebarFloatingNavigator';
 
-import { useTranslation } from '../../../locales/LanguageContext';
+import { SUPPORTED_LANGUAGES, useTranslation } from '../../../locales/LanguageContext';
 import { appAlert, appConfirm, appPrompt } from '../../../lib/app-dialog';
 import AdminAnnouncementManager from '../../../features/announcements/AdminAnnouncementManager';
 import type { Announcement } from '../../../features/announcements/types';
@@ -114,6 +114,8 @@ type MenuKey =
   | `enterprise-v${26 | 27 | 28 | 29 | 30 | 31 | 32 | 33 | 34 | 35}`;
 
 const isoToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+
+const REPORT_SUBPAGE_KEYS: MenuKey[] = ['attendance','schedule','shift','holiday','payroll','payroll-components','payroll-overtime','payslip','performance','kpi','recruitment-v25','recruitment','candidates'];
 
 const rolePermissions: Record<string, string[]> = {
   'Super Admin': ['*'],
@@ -301,7 +303,7 @@ function FeedbackAdmin({ employees }: { employees: Karyawan[] }) {
 
   return (
     <div className="feedback-module">
-      <div className="card feedback-list-card">
+      <section className="feedback-list-surface">
         <div className="card-title feedback-card-title">
           <div>
             <span className="card-kicker">{t("feedback_inbox")}</span>
@@ -317,14 +319,7 @@ function FeedbackAdmin({ employees }: { employees: Karyawan[] }) {
           </button>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(180px, 1fr) 150px 150px',
-            gap: 10,
-            marginBottom: 16
-          }}
-        >
+        <div className="feedback-filter-bar">
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -393,10 +388,10 @@ function FeedbackAdmin({ employees }: { employees: Karyawan[] }) {
             </table>
           </div>
         )}
-      </div>
+      </section>
 
       {selected && (
-        <div className="card feedback-detail-card">
+        <section className="card feedback-detail-card">
           <div className="card-title feedback-card-title">
             <div>
               <span className="card-kicker">{selected.kategori.toUpperCase()}</span>
@@ -486,7 +481,7 @@ function FeedbackAdmin({ employees }: { employees: Karyawan[] }) {
               </button>
             </div>
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
@@ -1558,9 +1553,9 @@ export default function DashboardAdmin() {
 <ThemeControl userRole={userRole} /><button className="icon-btn" aria-label="Muat ulang" onClick={()=>refresh()}><Icon name="refresh"/></button><div className="profile-trigger-wrap"><button type="button" className="avatar avatar-button" aria-label={t('open_profile')} aria-expanded={profileOpen} onClick={()=>setProfileOpen(v=>!v)}>{profilePhotoUrl ? <img src={profilePhotoUrl} alt={t('profile')} /> : (profileName || "HR").split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}</button>{profileOpen && <div className="profile-menu"><div className="profile-menu-header"><div className="profile-avatar-large">{(profileName || "HR").split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}</div><div><strong>{profileName || email || "Pengguna"}</strong><small>{userRole || "Pengguna"}</small></div></div><div className="profile-menu-divider"/><button type="button" onClick={()=>{setProfileOpen(false);setProfilePanelOpen(true)}}><span>👤</span>{t('profile')}</button><button type="button" onClick={()=>{setProfileOpen(false);navigate("roles")}}><span>🛡️</span>{t('role')}</button><div className="profile-language">
   <button type="button" onClick={()=>setLanguageOpen(v=>!v)}><span>🌐</span>{t('language')} <small>{lang.toUpperCase()} ▾</small></button>
   {languageOpen && <div className="profile-language-options">
-    {([['id','Indonesia'],['en','English'],['ja','日本語'],['ko','한국어'],['zh','中文']] as const).map(([code,name])=>
-      <button type="button" key={code} className={lang===code?'selected':''} onClick={async()=>{await setLang(code);setProfileOpen(false)}}>
-        {lang===code?'✓':' '} {name}
+    {SUPPORTED_LANGUAGES.map(({ code, nativeName })=>
+      <button type="button" key={code} className={lang===code?'selected':''} onClick={()=>{void setLang(code);setLanguageOpen(false);setProfileOpen(false)}}>
+        {lang===code?'✓':' '} {nativeName}
       </button>
     )}
   </div>}
@@ -1599,8 +1594,8 @@ export default function DashboardAdmin() {
                 </div>
               </div>}
 
-    <section className="page admin-page-frame">{loading&&<div className="loading">Memuat data…</div>}{error&&<div className="alert">{error}</div>}
-    {menu==='overview'&&<Overview employees={employees} attendance={attendance} payroll={payroll} onNavigate={navigate} profileName={profileName}/>}
+    <section className={`page admin-page-frame${menu === 'reports' ? ' reports-page' : REPORT_SUBPAGE_KEYS.includes(menu) ? ' reports-subpage' : ''}${menu === 'employee-360' ? ' employee360-page' : ''}${menu === 'feedback' ? ' feedback-page' : ''}${menu === 'announcements' ? ' announcements-page' : ''}${menu === 'id-card' ? ' id-card-page' : ''}`}>{loading&&<div className="loading">Memuat data…</div>}{error&&<div className="alert">{error}</div>}
+    {menu==='overview'&&<Overview employees={employees} attendance={attendance} payroll={payroll} onNavigate={navigate} profileName={profileName} announcements={announcements}/>}
     {menu==='ai-center'&&<AICenter dbPerms={dbPerms} userRole={userRole}/>}
     {menu==='professional-suite'&&<ProfessionalSuite employees={employees} attendance={attendance} onNavigate={navigate}/>}
     {menu==='id-card'&&<IDCardModule employees={employees} companyName="Project by Tirta" logoUrl={moonLogo}/> }
@@ -1774,77 +1769,263 @@ function Heading({
   );
 }
 
-function Overview({employees,attendance,payroll,onNavigate,profileName}:{employees:Karyawan[];attendance:Absensi[];payroll:number;onNavigate:(m:MenuKey)=>void;profileName:string}){
-  const { t } = useTranslation();
- 
- const active = employees.filter(k => k.status_aktif !== false).length;
- const inactive = Math.max(0, employees.length - active);
+function Overview({
+  employees,
+  attendance,
+  payroll,
+  onNavigate,
+  profileName,
+  announcements,
+}: {
+  employees: Karyawan[];
+  attendance: Absensi[];
+  payroll: number;
+  onNavigate: (m: MenuKey) => void;
+  profileName: string;
+  announcements: Announcement[];
+}) {
+  const { t, lang } = useTranslation();
+  const locale = lang === 'id' ? 'id-ID' : lang === 'ja' ? 'ja-JP' : lang === 'ko' ? 'ko-KR' : lang === 'zh' ? 'zh-CN' : 'en-US';
+  const active = employees.filter((k) => k.status_aktif !== false).length;
+  const pending = employees.filter(
+    (k) =>
+      k.status_aktif === false &&
+      String(k.role || 'karyawan').toLowerCase() === 'karyawan' &&
+      String(k.status_karyawan || '').toLowerCase() !== 'ditolak',
+  ).length;
 
- // Attendance hari ini: satu karyawan dihitung satu kali.
- const todayAttendance = attendance.filter(a => a.tanggal === isoToday());
- const attendanceByEmployee = new Map<string, Absensi>();
+  const publishedAnnouncements = announcements.filter((a) => a.status === 'published');
+  const publishedCount = publishedAnnouncements.length;
 
- todayAttendance.forEach(a => {
-   const key = a.id_karyawan || a.nama || String(a.id || Math.random());
-   if (!attendanceByEmployee.has(key)) {
-     attendanceByEmployee.set(key, a);
-   }
- });
+  const today = isoToday();
+  const todayRows = attendance.filter((a) => a.tanggal === today);
+  const uniqueToday = new Map<string, Absensi>();
+  todayRows.forEach((row) => {
+    const key = String(row.id_karyawan || row.nama || row.id || '');
+    if (!uniqueToday.has(key)) uniqueToday.set(key, row);
+  });
 
- const todayRows = Array.from(attendanceByEmployee.values());
+  const presentCount = [...uniqueToday.values()].filter((row) => {
+    const status = String(row.status || '').toLowerCase();
+    return status.includes('hadir') || status.includes('tepat');
+  }).length;
+  const lateCount = [...uniqueToday.values()].filter((row) => {
+    const status = String(row.status || '').toLowerCase();
+    return status.includes('terlambat') || Number(row.keterlambatan_menit || 0) > 0;
+  }).length;
+  const attendanceRate = active
+    ? Math.min(100, Math.round(((presentCount + lateCount) / active) * 100))
+    : 0;
+  const absentCount = Math.max(0, active - presentCount - lateCount);
 
- const lateToday = todayRows.filter(a =>
-   (a.status || '').toLowerCase().includes('terlambat') ||
-   Number(a.keterlambatan_menit || 0) > 0
- );
+  const sixMonths = Array.from({ length: 6 }, (_, index) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - (5 - index), 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    const label = new Intl.DateTimeFormat(locale, { month: 'short' }).format(d);
+    const value = attendance.filter((a) => String(a.tanggal || '').startsWith(key)).length;
+    return { key, label, value };
+  });
+  const maxMonth = Math.max(1, ...sixMonths.map((item) => item.value));
 
- const presentToday = todayRows.filter(a =>
-   !lateToday.includes(a) &&
-   ['Hadir', 'Tepat Waktu'].includes(a.status || '')
- );
+  const chartWidth = 620;
+  const chartHeight = 180;
+  const chartPoints = sixMonths
+    .map((item, index) => {
+      const x = 24 + (index * (chartWidth - 48)) / Math.max(1, sixMonths.length - 1);
+      const y = 138 - (item.value / maxMonth) * 100;
+      return `${x},${y}`;
+    })
+    .join(' ');
+  const areaPoints = `24,138 ${chartPoints} ${chartWidth - 24},138`;
 
- const presentCount = presentToday.length;
- const lateCount = lateToday.length;
- const absentCount = Math.max(0, active - presentCount - lateCount);
+  const statCards = [
+    {
+      title: t('total_employees'),
+      value: String(employees.length),
+      note: `${active} ${t('active').toLowerCase()}`,
+      icon: 'users',
+      tone: 'gold',
+    },
+    {
+      title: t('active_employees'),
+      value: String(active),
+      note: `${employees.length ? Math.round((active / employees.length) * 100) : 0}% ${t('from_active_employee_master').toLowerCase()}`,
+      icon: 'check',
+      tone: 'green',
+    },
+    {
+      title: t('pending_approval'),
+      value: String(pending),
+      note: pending ? t('attendance_review_needed') : t('no_exceptions_today'),
+      icon: 'alert',
+      tone: 'red',
+    },
+    {
+      title: t('latest_announcements'),
+      value: String(publishedCount),
+      note: t('view_all'),
+      icon: 'bell',
+      tone: 'blue',
+    },
+  ];
 
- const attendanceRate = active
-   ? Math.min(100, Math.round(((presentCount + lateCount) / active) * 100))
-   : 0;
+  return (
+    <div className="reference-dashboard">
+      <section className="reference-welcome">
+        <div>
+          <span className="eyebrow">{t('hr_control_center')}</span>
+          <h1>
+            {t('welcome')}, {profileName || 'Admin'} <span aria-hidden="true">👋</span>
+          </h1>
+          <p>{t('dashboard_energy_desc')}</p>
+        </div>
+        <div className="reference-clock">
+          <span>{new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(new Date())}</span>
+          <strong>{new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(new Date())}</strong>
+        </div>
+      </section>
 
- const recent = attendance.slice(0,6);
- const dept=employees.reduce<Record<string,number>>((a,k)=>{const d=k.departemen||'Belum diatur';a[d]=(a[d]||0)+1;return a},{});
- const deptRows=Object.entries(dept).sort((a,b)=>b[1]-a[1]).slice(0,5);
- const maxDept=Math.max(1,...deptRows.map(x=>x[1]));
- return <div className="executive-dashboard">
-  <Heading title={profileName || t("hr_control_center")} desc={t("hr_control_desc")} action={t("add_employee")} onAction={()=>onNavigate('employee-add')}/>
-  <div className="command-strip">
-   <div><span className="eyebrow">{t("operational_status")}</span><strong>{t("system_status")}</strong><small>{t("database_connected")}</small></div>
-   <div className="strip-meta"><span className="status green">Operational</span><span>{t("auto_update_on_load")}</span></div>
-  </div>
-  <div className="stat-grid executive-stats">
-   <Stat title={t("total_employees")} value={String(employees.length)} hint={`${active} ${t("active")} · ${inactive} ${t("inactive")}`} icon="users"/>
-   <Stat title={t("attendance_today")} value={`${attendanceRate}%`} hint={`${presentCount} ${t("present")} · ${lateCount} ${t("late")}`} icon="check"/>
-   <Stat title={t("total_basic_salary")} value={money(payroll)} hint={t("from_active_employee_master")} icon="payroll"/>
-   <Stat title={t("attendance_data")} value={String(attendance.length)} hint={t("data_saved")} icon="clock"/>
-  </div>
-  <div className="dashboard-grid-top">
-   <div className="panel executive-chart">
-    <div className="panel-head"><div><span className="eyebrow">{t("workforce")}</span><h2>{t("workforce_composition")}</h2><p>{t("employee_distribution_by_department")}</p></div><button className="link-btn" onClick={()=>onNavigate("employees")}>{t("open_master")}</button></div>
-    <div className="department-bars">{deptRows.length?deptRows.map(([name,count])=><div className="dept-row" key={name}><div className="dept-label"><span>{name}</span><b>{count}</b></div><div className="progress"><span style={{width:`${Math.round(count/maxDept*100)}%`}}/></div></div>):<div className="empty-module"><h3>{t("no_workforce_data")}</h3><p>{t("add_employee_to_view")}</p></div>}</div>
-   </div>
-   <div className="panel attendance-health">
-    <div className="panel-head"><div><span className="eyebrow">{t("today")}</span><h2>{t("attendance_status")}</h2><p>{t("attendance_status_today")}</p></div></div>
-    <div className="health-ring" style={{'--rate':`${attendanceRate*3.6}deg`} as CSSProperties}><div><strong>{attendanceRate}%</strong><small>{t("present")}</small></div></div>
-    <div className="health-legend"><div><i className="dot present"/><span>{t("present")}</span><b>{presentCount}</b></div><div><i className="dot late"/><span>{t("late")}</span><b>{lateCount}</b></div><div><i className="dot absent"/><span>{t("not_recorded")}</span><b>{absentCount}</b></div></div>
-   </div>
-  </div>
-  <div className="dashboard-grid-bottom">
-   <div className="panel"><div className="panel-head"><div><span className="eyebrow">{t("recent_activity")}</span><h2>{t("recent_attendance_activity")}</h2><p>{t("recent_attendance_data")}</p></div><button className="link-btn" onClick={()=>onNavigate("attendance")}>{t("view_all")}</button></div><AttendanceMini rows={recent}/></div>
-   <div className="panel quick executive-quick"><div className="panel-head"><div><span className="eyebrow">{t("quick_access")}</span><h2>{t("quick_access")}</h2><p>{t("quick_access_desc")}</p></div></div><Quick label={t("add_employee")} icon="users" onClick={()=>onNavigate('employee-add')}/><Quick label={t("work_schedule")} icon="calendar" onClick={()=>onNavigate('schedule')}/><Quick label={t("payroll")} icon="payroll" onClick={()=>onNavigate('payroll')}/><Quick label={t("leave_request")} icon="request" onClick={()=>onNavigate('leave-request')}/></div>
-  </div>
- </div>
+      <section className="reference-stats">
+        {statCards.map((card) => (
+          <article className={`reference-stat ${card.tone}`} key={card.title}>
+            <div className="reference-stat-icon"><Icon name={card.icon} /></div>
+            <div>
+              <span>{card.title}</span>
+              <strong>{card.value}</strong>
+              <small>{card.note}</small>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="reference-main-grid">
+        <article className="reference-card reference-chart-card">
+          <div className="reference-card-head">
+            <div>
+              <span className="eyebrow">{t('last_six_months')}</span>
+              <h2>{t('employee_analytics')}</h2>
+            </div>
+            <button type="button" className="reference-chip">{t('last_six_months')} ×</button>
+          </div>
+          <svg className="reference-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={t('last_six_months')}>
+            <defs>
+              <linearGradient id="referenceChartFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="var(--web-accent-2)" stopOpacity=".38" />
+                <stop offset="100%" stopColor="var(--web-accent-2)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {[0, 1, 2, 3].map((line) => {
+              const y = 38 + line * 33;
+              return <line key={line} x1="24" x2={chartWidth - 24} y1={y} y2={y} stroke="rgba(165,198,238,.10)" />;
+            })}
+            <polygon points={areaPoints} fill="url(#referenceChartFill)" />
+            <polyline points={chartPoints} fill="none" stroke="var(--web-accent-2)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            {sixMonths.map((item, index) => {
+              const x = 24 + (index * (chartWidth - 48)) / Math.max(1, sixMonths.length - 1);
+              const y = 138 - (item.value / maxMonth) * 100;
+              return (
+                <g key={item.key}>
+                  <circle cx={x} cy={y} r="4" fill="var(--web-accent-2)" stroke="#fff" strokeWidth="1.5" />
+                  <text x={x} y="166" textAnchor="middle" fill="#91a6bf" fontSize="9">{item.label}</text>
+                </g>
+              );
+            })}
+          </svg>
+          <div className="reference-chart-legend">
+            <span><i className="dot present" />{t('active')}</span>
+            <span><i className="dot absent" />{t('inactive')}</span>
+            <button type="button" className="link-btn" onClick={() => onNavigate('employees')}>{t('open_master')} →</button>
+          </div>
+        </article>
+
+        <article className="reference-card reference-announcement-card">
+          <div className="reference-card-head">
+            <div>
+              <span className="eyebrow">{t('recent_activity')}</span>
+              <h2>{t('latest_announcements')}</h2>
+            </div>
+            <button type="button" className="link-btn" onClick={() => onNavigate('announcements')}>{t('view_all')} →</button>
+          </div>
+          <div className="reference-announcement-list">
+            {publishedAnnouncements.slice(0, 4).map((item, index) => (
+              <button key={item.id} type="button" onClick={() => onNavigate('announcements')}>
+                <span className={`reference-news-icon news-${index % 4}`}>{['⌂', '◷', '▣', '✦'][index]}</span>
+                <span className="reference-news-copy">
+                  <strong>{item.title}</strong>
+                  <small>{item.publishedAt ? new Date(item.publishedAt).toLocaleDateString(locale) : t('new')}</small>
+                </span>
+                <em>{item.priority === 'urgent' ? 'Penting' : item.priority === 'important' ? 'Tinggi' : 'Normal'}</em>
+              </button>
+            ))}
+            {!publishedAnnouncements.length && (
+              <div className="reference-empty">{t('announcement_none')}</div>
+            )}
+          </div>
+        </article>
+
+        <article className="reference-card reference-attendance-card">
+          <div className="reference-card-head">
+            <div>
+              <span className="eyebrow">{t('today')}</span>
+              <h2>{t('attendance_rate')}</h2>
+            </div>
+          </div>
+          <div className="reference-attendance-ring" style={{ '--rate': `${attendanceRate * 3.6}deg` } as CSSProperties}>
+            <div><strong>{attendanceRate}%</strong><small>{t('present')}</small></div>
+          </div>
+          <div className="reference-attendance-list">
+            <div><span><i className="dot present" />{t('present')}</span><b>{presentCount}</b></div>
+            <div><span><i className="dot late" />{t('permission')} / {t('late_data')}</span><b>{lateCount}</b></div>
+            <div><span><i className="dot absent" />{t('not_recorded')}</span><b>{absentCount}</b></div>
+          </div>
+        </article>
+      </section>
+
+      <section className="reference-banner">
+        <div>
+          <span>PROJECT BY TIRTA</span>
+          <strong>{t('build_better_work_environment')}</strong>
+        </div>
+        <button type="button" onClick={() => onNavigate('professional-suite')}>{t('view_guide')} →</button>
+      </section>
+
+      <section className="reference-bottom-grid">
+        <article className="reference-card">
+          <div className="reference-card-head">
+            <div><span className="eyebrow">{t('recent_activity')}</span><h2>{t('attendance_activity')}</h2></div>
+            <button type="button" className="link-btn" onClick={() => onNavigate('attendance')}>{t('view_all')} →</button>
+          </div>
+          <AttendanceMini rows={attendance.slice(0, 4)} />
+        </article>
+        <article className="reference-card reference-quick-card">
+          <div className="reference-card-head">
+            <div><span className="eyebrow">{t('quick_access')}</span><h2>{t('favorite_menu')}</h2></div>
+          </div>
+          <div className="reference-quick-grid">
+            <Quick label={t('add_employee')} icon="users" onClick={() => onNavigate('employee-add')} />
+            <Quick label={t('work_schedule')} icon="calendar" onClick={() => onNavigate('schedule')} />
+            <Quick label={t('payroll')} icon="payroll" onClick={() => onNavigate('payroll')} />
+            <Quick label={t('leave_request')} icon="request" onClick={() => onNavigate('leave-request')} />
+          </div>
+          <div className="reference-footnote">{t('payroll')} · {t('master_employees')}: {money(payroll)}</div>
+        </article>
+      </section>
+
+      <section className="reference-themes">
+        {(['sun', 'moon', 'galaxy', 'blackhole', 'nebula'] as const).map((theme) => (
+          <button key={theme} type="button" onClick={() => {
+            document.documentElement.dataset.cosmicTheme = theme;
+            window.dispatchEvent(new CustomEvent('project-tirta-theme-change', { detail: theme }));
+          }}>
+            <img src={`/cosmic-web/${theme}.webp`} alt="" />
+            <span>{theme === 'sun' ? 'Matahari' : theme === 'moon' ? 'Bulan' : theme === 'galaxy' ? 'Galaksi' : theme === 'blackhole' ? 'Blackhole' : 'Nebula'}</span>
+          </button>
+        ))}
+      </section>
+    </div>
+  );
 }
-function Stat({title,value,hint,icon}:{title:string;value:string;hint:string;icon:string}){return <div className="stat-card"><div className="stat-icon"><Icon name={icon}/></div><div><span>{title}</span><strong>{value}</strong><small>{hint}</small></div></div>}
 function Quick({label,icon,onClick}:{label:string;icon:string;onClick:()=>void}){return <button className="quick-action" onClick={onClick}><span className="quick-icon"><Icon name={icon}/></span>{label}<span aria-hidden="true">›</span></button>}
 function AttendanceMini({rows}:{rows:Absensi[]}){const { t } = useTranslation(); return <div className="table-wrap"><table><thead><tr><th>{t('employee')}</th><th>{t('date')}</th><th>{t('check_in')}</th><th>{t('check_out')}</th><th>{t('status')}</th></tr></thead><tbody>{rows.length?rows.map((a,i)=><tr key={a.id||i}><td><b>{a.nama||'-'}</b><small>{a.id_karyawan||''}</small></td><td>{a.tanggal||'-'}</td><td className="green">{a.jam_masuk||'-'}</td><td>{a.jam_pulang||'-'}</td><td><Status value={a.status||'Hadir'}/></td></tr>):<Empty cols={5}/>}</tbody></table></div>}
 
@@ -2603,8 +2784,74 @@ function TalentForm({tab,employees,onClose,onSaved}:{tab:string;employees:Karyaw
  const save=async(e:FormEvent)=>{e.preventDefault();const numeric=['target','realisasi','bobot','skor','jumlah_kebutuhan','nilai'];const payload={...f};numeric.forEach(k=>{if(k in payload)payload[k]=Number(payload[k]||0)});const {error}=await supabase.from(table).insert(payload);if(error)await appAlert(error.message);else onSaved()};
  return <SimpleModal title={`${t('add')} ${tab==='kpi'?t('kpi'):tab==='vacancies'?t('vacancies'):tab==='candidates'?t('candidates'):tab==='interviews'?t('interviews'):t('performance')}`} onClose={onClose} onSave={save}>{Object.entries(f).map(([k,v])=><label key={k}>{fieldLabel(k)}{k==='id_karyawan'?<select required value={String(v)} onChange={e=>setF({...f,[k]:e.target.value})}><option value="">{t('select_employee')}</option>{employees.map(x=><option key={x.id_karyawan} value={x.id_karyawan}>{x.nama} — {x.id_karyawan}</option>)}</select>:<input required={['nama','posisi','indikator','kandidat'].includes(k)} type={['target','realisasi','bobot','skor','jumlah_kebutuhan','nilai'].includes(k)?'number':k==='tanggal'||k.includes('tanggal')?'date':k==='jam'?'time':'text'} value={String(v??'')} onChange={e=>setF({...f,[k]:e.target.value})}/>}</label>)}</SimpleModal>
 }
-function Reports({employees,attendance,onExport}:{employees:Karyawan[];attendance:Absensi[];onExport:(r:any[],f:string)=>void}){const {t}=useTranslation();const [tab,setTab]=useState('overview'),[payroll,setPayroll]=useState<any[]>([]);useEffect(()=>{if(tab!=='payroll')return;return watchSupabaseAuth(async()=>{const {data}=await supabase.from('hris_payroll').select('*').order('created_at',{ascending:false}).limit(2000);setPayroll(data||[])})},[tab]);const items=[['overview',t('analytics'),'report'],['attendance',t('attendance_report'),'clock'],['payroll',t('payroll_report'),'payroll'],['people',t('employee_report'),'users']].map(([key,label,icon])=>({key,label,icon}));return <Branch title={t('reports')} desc={t('reports_desc')} items={items} tab={tab} setTab={setTab}>{tab==='overview'?<div className="report-grid"><ReportCard name={t('master_employees')} count={employees.length} onClick={()=>onExport(employees,'laporan-karyawan.csv')}/><ReportCard name={t('attendance')} count={attendance.length} onClick={()=>onExport(attendance,'laporan-absensi.csv')}/><ReportCard name={t('payroll')} count={payroll.length} onClick={()=>onExport(payroll,'laporan-payroll.csv')}/></div>:tab==='attendance'?<ReportCard name={t('attendance_report')} count={attendance.length} onClick={()=>onExport(attendance,'laporan-absensi.csv')}/>:tab==='people'?<ReportCard name={t('employee_report')} count={employees.length} onClick={()=>onExport(employees,'laporan-karyawan.csv')}/>:<ReportCard name={t('payroll_report')} count={payroll.length} onClick={()=>onExport(payroll,'laporan-payroll.csv')}/>}</Branch>}
-function ReportCard({name,count,onClick}:{name:string;count:number;onClick:()=>void}){const {t}=useTranslation();return <div className="report-card"><span>{t('reports')||'LAPORAN'}</span><h3>{name}</h3><b>{count}</b><p>{t('data_available')||'data tersedia'}</p><button className="primary" onClick={onClick}>{t('export_csv')||'Export CSV'}</button></div>}
+function Reports({ employees, attendance, onExport }: { employees: Karyawan[]; attendance: Absensi[]; onExport: (r: any[], f: string) => void }) {
+  const { t } = useTranslation();
+  const [tab, setTab] = useState('overview');
+  const [payroll, setPayroll] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (tab !== 'payroll') return;
+    return watchSupabaseAuth(async () => {
+      const { data } = await supabase
+        .from('hris_payroll')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(2000);
+      setPayroll(data || []);
+    });
+  }, [tab]);
+
+  const items = [
+    ['overview', t('analytics'), 'report'],
+    ['attendance', t('attendance_report'), 'clock'],
+    ['payroll', t('payroll_report'), 'payroll'],
+    ['people', t('employee_report'), 'users'],
+  ].map(([key, label, icon]) => ({ key, label, icon }));
+
+  return (
+    <div className="reports-page-content">
+      <Heading title={t('reports')} desc={t('reports_desc')} />
+      <nav className="branch-nav reports-nav" aria-label={t('reports')}>
+        {items.map(item => (
+          <button key={item.key} className={tab === item.key ? 'active' : ''} onClick={() => setTab(item.key)}>
+            <span>{item.icon}</span>{item.label}
+          </button>
+        ))}
+      </nav>
+
+      {tab === 'overview' ? (
+        <div className="report-grid reports-card-grid">
+          <ReportCard name={t('master_employees')} count={employees.length} icon="users" onClick={() => onExport(employees, 'laporan-karyawan.csv')} />
+          <ReportCard name={t('attendance')} count={attendance.length} icon="clock" onClick={() => onExport(attendance, 'laporan-absensi.csv')} />
+          <ReportCard name={t('payroll')} count={payroll.length} icon="payroll" onClick={() => onExport(payroll, 'laporan-payroll.csv')} />
+        </div>
+      ) : tab === 'attendance' ? (
+        <div className="reports-single-card"><ReportCard name={t('attendance_report')} count={attendance.length} icon="clock" onClick={() => onExport(attendance, 'laporan-absensi.csv')} /></div>
+      ) : tab === 'people' ? (
+        <div className="reports-single-card"><ReportCard name={t('employee_report')} count={employees.length} icon="users" onClick={() => onExport(employees, 'laporan-karyawan.csv')} /></div>
+      ) : (
+        <div className="reports-single-card"><ReportCard name={t('payroll_report')} count={payroll.length} icon="payroll" onClick={() => onExport(payroll, 'laporan-payroll.csv')} /></div>
+      )}
+    </div>
+  );
+}
+
+function ReportCard({ name, count, icon, onClick }: { name: string; count: number; icon: string; onClick: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <article className="report-card">
+      <div className="report-card-icon" aria-hidden="true"><Icon name={icon} /></div>
+      <div className="report-card-copy">
+        <span>{t('reports') || 'LAPORAN'}</span>
+        <h3>{name}</h3>
+        <strong>{count.toLocaleString()}</strong>
+        <p>{t('data_available') || 'data tersedia'}</p>
+      </div>
+      <button className="primary report-card-action" onClick={onClick}>{t('export_csv') || 'Export CSV'}</button>
+    </article>
+  );
+}
+
 function ThemeControl({ userRole }: { userRole: string }) {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState<import('../../../lib/userPreferences').PublicAppTheme>('professional');
@@ -3433,7 +3680,7 @@ function Audit() {
         desc="Riwayat aktivitas dan perubahan data yang tercatat di database."
       />
 
-      <div className="panel" style={{ marginBottom: 16 }}>
+      <div className="audit-filter-bar">
         <div
           style={{
             display: 'grid',
@@ -3689,8 +3936,7 @@ function Audit() {
             zIndex: 9999,
           }}
         >
-          <div
-            onClick={(e) => e.stopPropagation()}
+          <div className="audit-detail-modal" onClick={(e) => e.stopPropagation()}
             style={{
               width: 'min(1000px, 100%)',
               maxHeight: '85vh',

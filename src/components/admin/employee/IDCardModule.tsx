@@ -799,7 +799,7 @@ export default function IDCardModule({ employees, companyName, logoUrl }: Props)
   );
   const currentTheme = ID_CARD_DESIGN_THEMES[design.theme];
 
-  if (!employee) return <div className="panel"><p>{t('no_employee_for_id_card')}</p></div>;
+  if (!employee) return <div className="id-card-empty-state" role="status"><p>{t('no_employee_for_id_card')}</p></div>;
 
   return (
     <div className={`id-card-module ${orientation === "vertical" ? "id-card-module-vertical" : "id-card-module-horizontal"}${isAndroidApp ? " id-card-module-android" : ""}`}>
@@ -810,7 +810,7 @@ export default function IDCardModule({ employees, companyName, logoUrl }: Props)
 
       {actionError && <div className="id-card-alert" role="alert">{actionError}</div>}
 
-      <div className="id-card-designer panel">
+      <div className="id-card-designer">
         <div className="id-card-designer-head">
           <div><b>Designer ID Card</b><small>Ubah logo, nama perusahaan, tema, QR verifikasi, dan barcode. Perubahan tersimpan di perangkat ini.</small></div>
           <button type="button" className="secondary" onClick={resetDesign}>Reset desain</button>
@@ -844,7 +844,7 @@ export default function IDCardModule({ employees, companyName, logoUrl }: Props)
           <div className="id-card-actions"><button type="button" className="secondary" onClick={unduhPng}>⬇️ PNG</button><button type="button" className="secondary" onClick={unduhSvg}>⬇️ SVG</button><button type="button" className="primary" onClick={unduhPdf}>⬇️ Cetak/PDF — Depan + Belakang</button><button type="button" className="primary" onClick={cetakCurrent}>🖨️ Cetak — Depan + Belakang</button></div>
           <small className="id-card-note">Format aktif: <b>{orientation === 'vertical' ? 'Vertikal 54 × 85,6 mm' : 'Horizontal 85,6 × 54 mm'}</b>. Cetak/PDF selalu menyiapkan sisi depan dan belakang untuk karyawan yang dipilih.</small>
         </div>
-        <div className="panel id-card-list"><div className="id-list-head"><div><b>{t('select_batch_print')}</b><small>{selectedBatch.length} karyawan dipilih</small></div><button className="link-btn" onClick={() => setSelectedBatch(filtered.map(e => e.id))}>{t('select_all')}</button></div>{filtered.map(e => (
+        <div className="id-card-list"><div className="id-list-head"><div><b>{t('select_batch_print')}</b><small>{selectedBatch.length} karyawan dipilih</small></div><button className="link-btn" onClick={() => setSelectedBatch(filtered.map(e => e.id))}>{t('select_all')}</button></div>{filtered.map(e => (
   <EmployeeBatchRow
     key={e.id}
     employee={e}

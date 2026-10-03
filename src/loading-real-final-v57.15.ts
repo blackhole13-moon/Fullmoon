@@ -194,7 +194,7 @@ body:has(.login-wrap:has(.loading)),
 
 export function installLoadingStyles(): void {
   if (typeof document === 'undefined') return;
-  // Web loading visuals are owned by project-tirta-web-v1.css.
+  // Web loading visuals are owned by web-reference.css.
   // Keep the existing runtime stylesheet unchanged for Android only.
   if (document.documentElement.dataset.platform === 'web') return;
   const existing = document.getElementById(STYLE_ID);

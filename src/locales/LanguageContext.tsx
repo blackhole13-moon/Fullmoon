@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { translations } from './translations';
 import { supabase } from '../lib/supabase/client';
 
@@ -39,14 +39,20 @@ export function LanguageProvider({
 }) {
   const [lang, setLangState] = useState<LanguageCode>(DEFAULT_LANGUAGE);
   const [userId, setUserId] = useState<string | null>(null);
+  // Prevent a late bootstrap/auth request from overwriting a language the
+  // user has just selected. Supabase auth can emit INITIAL_SESSION while the
+  // preference request is still in flight.
+  const languageRevision = useRef(0);
 
   useEffect(() => {
     let active = true;
 
     const loadForUser = async (nextUserId: string | null) => {
+      const revisionAtStart = languageRevision.current;
       setUserId(nextUserId);
 
       if (!nextUserId) {
+        if (revisionAtStart !== languageRevision.current) return;
         try {
           const saved = localStorage.getItem(ANONYMOUS_STORAGE_KEY);
           setLangState(isSupportedLanguage(saved) ? saved : DEFAULT_LANGUAGE);
@@ -63,13 +69,15 @@ export function LanguageProvider({
         // Cache is optional; Supabase remains the source of truth.
       }
 
+      if (revisionAtStart !== languageRevision.current) return;
+
       const { data, error } = await supabase
         .from('hris_user_preferences')
         .select('language')
         .eq('user_id', nextUserId)
         .maybeSingle();
 
-      if (!active) return;
+      if (!active || revisionAtStart !== languageRevision.current) return;
 
       if (!error && isSupportedLanguage(data?.language)) {
         setLangState(data.language);
@@ -103,6 +111,7 @@ export function LanguageProvider({
   const setLang = async (newLang: LanguageCode) => {
     if (!isSupportedLanguage(newLang)) return;
 
+    languageRevision.current += 1;
     setLangState(newLang);
 
     try {

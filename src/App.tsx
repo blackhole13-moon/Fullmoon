@@ -11,7 +11,6 @@ import {
   applyProjectTheme,
   type PublicAppTheme
 } from './lib/userPreferences';
-import './styles/login-safe-background.css';
 
 import moonLogo from './assets/moon-logo.svg';
 import AndroidCosmicBackground from './components/karyawan/dashboard/AndroidCosmicBackground';

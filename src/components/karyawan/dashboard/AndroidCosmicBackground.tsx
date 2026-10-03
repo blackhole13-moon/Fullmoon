@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { createPortal } from 'react-dom';
 import sunArt from '../../../assets/cosmic/cosmic-sun.webp';
 import moonArt from '../../../assets/cosmic/cosmic-moon.webp';
@@ -21,6 +22,7 @@ function readTheme(): CosmicTheme {
 }
 
 export default function AndroidCosmicBackground() {
+  const isWeb = Capacitor.getPlatform() === 'web';
   const [theme,setTheme] = useState<CosmicTheme>(readTheme);
 
       const art = useRef<HTMLDivElement>(null);
@@ -28,6 +30,8 @@ export default function AndroidCosmicBackground() {
   const stars = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+      if (isWeb) return;
+
       document.body.classList.add('pt-android-cosmic-mode');
 
       const root = document.documentElement;
@@ -77,9 +81,11 @@ export default function AndroidCosmicBackground() {
           'pt-android-cosmic-mode'
         );
       };
-    }, []);
+    }, [isWeb]);
 
   useEffect(() => {
+    if (isWeb) return;
+
     let raf = 0;
     const start = performance.now();
 
@@ -131,7 +137,7 @@ export default function AndroidCosmicBackground() {
 
     raf=requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  },[theme]);
+  },[theme, isWeb]);
 
   const root:CSSProperties = {
     position:'fixed', inset:0, width:'100vw', height:'100dvh',
@@ -152,7 +158,7 @@ export default function AndroidCosmicBackground() {
       ? 'conic-gradient(from 35deg at 50% 50%,rgba(255,90,210,.14),transparent 35%,rgba(80,140,255,.16),transparent 70%)'
       : 'radial-gradient(circle at 50% 45%,rgba(80,190,255,.10),transparent 42%)';
 
-  if (typeof document === 'undefined') return null;
+  if (typeof document === 'undefined' || isWeb) return null;
   if (theme === 'professional') return null;
 
   return createPortal(

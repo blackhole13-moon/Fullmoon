@@ -7,29 +7,45 @@ import { registerPwa } from './pwa';
 import { initializeCosmicTheme, installProjectByTirtaTheme } from './theme/professionalTheme';
 import { installLoadingStyles } from './loading-real-final-v57.15';
 import { installProjectTirtaAndroidPolish } from './theme/projectTirtaAndroidPolish';
+import { installWebFinalPolish } from './theme/webFinalPolish';
 
-import './styles/project-tirta-web-v1.css';
-import './styles/android-cosmic-background.css';
-registerPwa();
-document.documentElement.dataset.platform = Capacitor.getPlatform();
+import './styles/web-reference.css';
 
-//
-// Web/PWA juga wajib memasang runtime stylesheet utama.
-// Inisialisasi Cosmic khusus Android tetap dipisahkan.
-//
-
-installProjectByTirtaTheme();
-if (Capacitor.getPlatform() === 'android') {
-  initializeCosmicTheme();
-  installProjectTirtaAndroidPolish();
+const platform = Capacitor.getPlatform();
+document.documentElement.dataset.platform = platform;
+if (platform === 'web' && !document.documentElement.dataset.cosmicTheme) {
+  document.documentElement.dataset.cosmicTheme = 'sun';
 }
-installLoadingStyles();
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <LanguageProvider>
-      <App />
-    </LanguageProvider>
-  </StrictMode>
-);
-import './styles/android-login-profile-polish.css';
+async function bootstrap() {
+  registerPwa();
+
+  // Native-only polish/background styles must never enter the web bundle's
+  // global stylesheet cascade. The employee portal uses the same background
+  // component on Android and iOS, so both native platforms load these styles.
+  if (platform !== 'web') {
+    await Promise.all([
+      import('./styles/android-cosmic-background.css'),
+      import('./styles/android-login-profile-polish.css'),
+      import('./styles/login-safe-background.css'),
+    ]);
+  }
+
+  installProjectByTirtaTheme();
+  if (platform === 'web') installWebFinalPolish();
+  if (platform === 'android') {
+    initializeCosmicTheme();
+    installProjectTirtaAndroidPolish();
+  }
+  installLoadingStyles();
+
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
+    </StrictMode>
+  );
+}
+
+void bootstrap();

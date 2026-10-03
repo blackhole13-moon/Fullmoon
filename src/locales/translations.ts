@@ -1,5 +1,13 @@
 export const translations: Record<string, Record<string, string>> = {
   id: {
+    summary: 'Ringkasan',
+    dashboard_energy_desc: 'Energi hari ini membawa kita lebih dekat pada tujuan besar.',
+    last_six_months: '6 Bulan Terakhir',
+    latest_announcements: 'Pengumuman Terbaru',
+    build_better_work_environment: 'Bersama membangun lingkungan kerja yang lebih baik.',
+    view_guide: 'Lihat panduan',
+    favorite_menu: 'Menu Favorit',
+
     ai_module_assistant: "Asisten",
     ai_module_analytics: "Analitik",
     ai_module_reports: "Laporan",
@@ -909,6 +917,14 @@ export const translations: Record<string, Record<string, string>> = {
 },
 
   en: {
+    summary: 'Summary',
+    dashboard_energy_desc: 'Today’s energy brings us closer to bigger goals.',
+    last_six_months: 'Last 6 Months',
+    latest_announcements: 'Latest Announcements',
+    build_better_work_environment: 'Together, building a better workplace environment.',
+    view_guide: 'View Guide',
+    favorite_menu: 'Favorite Menu',
+
     ai_module_assistant: "Assistant",
     ai_module_analytics: "Analytics",
     ai_module_reports: "Reports",
@@ -1818,6 +1834,14 @@ export const translations: Record<string, Record<string, string>> = {
 },
 
   ja: {
+    summary: '概要',
+    dashboard_energy_desc: '今日のエネルギーが、大きな目標へ一歩近づけてくれます。',
+    last_six_months: '過去6か月',
+    latest_announcements: '最新のお知らせ',
+    build_better_work_environment: 'ともに、より良い職場環境をつくりましょう。',
+    view_guide: 'ガイドを見る',
+    favorite_menu: 'お気に入りメニュー',
+
     ai_module_assistant: "アシスタント",
     ai_module_analytics: "分析",
     ai_module_reports: "レポート",
@@ -2727,6 +2751,14 @@ export const translations: Record<string, Record<string, string>> = {
 },
 
   ko: {
+    summary: '요약',
+    dashboard_energy_desc: '오늘의 에너지가 더 큰 목표에 한 걸음 가까워지게 합니다.',
+    last_six_months: '최근 6개월',
+    latest_announcements: '최신 공지',
+    build_better_work_environment: '함께 더 나은 근무 환경을 만들어 갑니다.',
+    view_guide: '가이드 보기',
+    favorite_menu: '즐겨찾기 메뉴',
+
     ai_module_assistant: "어시스턴트",
     ai_module_analytics: "분석",
     ai_module_reports: "보고서",
@@ -3636,6 +3668,14 @@ export const translations: Record<string, Record<string, string>> = {
 },
 
   zh: {
+    summary: '概览',
+    dashboard_energy_desc: '今天的能量让我们更接近更大的目标。',
+    last_six_months: '最近6个月',
+    latest_announcements: '最新公告',
+    build_better_work_environment: '一起打造更好的工作环境。',
+    view_guide: '查看指南',
+    favorite_menu: '常用菜单',
+
     ai_module_assistant: "助手",
     ai_module_analytics: "分析",
     ai_module_reports: "报表",

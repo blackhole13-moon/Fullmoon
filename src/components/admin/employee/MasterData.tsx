@@ -113,7 +113,7 @@ export default function MasterData({
 
   return (
     <div className="master-data-module" style={styles.wrapper}>
-      <div style={styles.header}>
+      <header className="master-data-header" style={styles.header}>
         <div>
           <div style={styles.eyebrow}>{t("master_data_hris")}</div>
           <h1 style={styles.title}>{t("branch")} & {t("operational")}</h1>
@@ -121,9 +121,9 @@ export default function MasterData({
             {t('master_data_desc')}
           </p>
         </div>
-      </div>
+      </header>
 
-      <div style={styles.tabs}>
+      <nav className="master-data-tabs" style={styles.tabs}>
         <TabButton
           active={tab === 'cabang'}
           icon="building"
@@ -158,7 +158,7 @@ export default function MasterData({
           label={t("work_schedule")}
           onClick={() => setTab('jadwal')}
         />
-      </div>
+      </nav>
 
       {tab === 'cabang' && <CabangModule />}
       {tab === 'departemen' && <DepartemenModule />}
@@ -188,6 +188,7 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
+      className={active ? "master-data-tab active" : "master-data-tab"}
       style={{
         ...styles.tab,
         ...(active ? styles.tabActive : {}),
@@ -1935,7 +1936,7 @@ function Modal({
 }) {
   return (
     <div style={styles.overlay}>
-      <div style={styles.modal}>
+      <div className="master-data-modal" style={styles.modal}>
         <div style={styles.modalHeader}>
           <h3 style={styles.modalTitle}>{title}</h3>
 
